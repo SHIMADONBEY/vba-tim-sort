@@ -4,6 +4,68 @@ A library that implements Tim Sort's sorting algorithm in VBA.
 
 English | [日本語](README.ja.md)
 
+## How to Install
+
+1. Importing Files
+   - Open the VBA Editor, go to “File” → “Import File” in the menu, and add the following files to your project:  
+     - [vba-files/VbaTimSort.bas](vba-files/VbaTimSort.bas#L1)  
+     - [vba-files/IComparator.cls](vba-files/IComparator.cls#L1)  
+   - Sample implementations of `IComparator` are located in `vba-files/test/comparators/`. Add them to your project as needed.
+
+2. Usage (Arrays)
+
+``` vb
+Dim arr As Variant
+arr = Array(5, 2, 9, 1)
+
+' To sort in natural order (numbers, strings, dates), pass `Nothing` to the comparator.
+Dim sorted As Variant
+sorted = SortArrayInPlace(arr, Nothing)    ' Ascending
+
+' On Descending
+Dim sortedDesc As Variant
+```
+
+3. Usage （Collection）
+
+``` vb
+Dim coll As New Collection
+coll.Add "b"
+coll.Add "a"
+Dim sortedColl As Collection
+Set sortedColl = SortCollection(coll, Nothing)
+```
+
+4. An example of implementing IComparator
+
+``` vb: MyComparator.cls
+Implements IComparator
+
+Private Function IComparator_Compare(ByVal a As Variant, ByVal b As Variant) As Integer
+    ' Customized Comparation
+    If a < b Then
+        IComparator_Compare = -1
+    ElseIf a > b Then
+        IComparator_Compare = 1
+    Else
+        IComparator_Compare = 0
+    End If
+End Function
+```
+
+``` vb: example.bas
+' Example
+Dim comp As IComparator
+Set comp = New MyComparator
+Dim sortedWithComp As Variant
+sortedWithComp = SortArrayInPlace(arr, comp)
+```
+
+5. Notes
+
+- `SortArrayInPlace()` / `SortCollection()` does not modify the original array or collection; instead, it returns a new array or collection.
+- When comparing objects, you must provide an `IComparator`. (Failure to do so will result in an error.)
+
 ## Open Source Project Guidelines
 
 This project is maintained as an open source software (OSS) library.

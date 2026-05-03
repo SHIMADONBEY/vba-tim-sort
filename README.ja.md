@@ -4,6 +4,68 @@ VBA で Tim Sort アルゴリズムを実装したライブラリです。
 
 [English](README.md) | 日本語
 
+## 導入方法
+
+1. ファイルのインポート
+   - VBA エディタを開き、メニューの「ファイル」→「ファイルのインポート」で次のファイルをプロジェクトに追加します。  
+     - [vba-files/VbaTimSort.bas](vba-files/VbaTimSort.bas#L1)  
+     - [vba-files/IComparator.cls](vba-files/IComparator.cls#L1)  
+   - `IComparator` の実装サンプルは `vba-files/test/comparators/` にあります。必要に応じてプロジェクトに追加してください。
+
+2. 使い方 （配列）
+
+``` vb
+Dim arr As Variant
+arr = Array(5, 2, 9, 1)
+
+' 自然順（数値・文字列・日付）でソートする場合は comparator に Nothing を渡す
+Dim sorted As Variant
+sorted = SortArrayInPlace(arr, Nothing)    ' 昇順
+
+' 降順にする場合
+Dim sortedDesc As Variant
+```
+
+3. 使い方 （Collection）
+
+``` vb
+Dim coll As New Collection
+coll.Add "b"
+coll.Add "a"
+Dim sortedColl As Collection
+Set sortedColl = SortCollection(coll, Nothing)
+```
+
+4. IComparator を実装して使う例
+
+``` vb: MyComparator.cls
+Implements IComparator
+
+Private Function IComparator_Compare(ByVal a As Variant, ByVal b As Variant) As Integer
+    ' カスタム比較ロジック（例：数値比較）
+    If a < b Then
+        IComparator_Compare = -1
+    ElseIf a > b Then
+        IComparator_Compare = 1
+    Else
+        IComparator_Compare = 0
+    End If
+End Function
+```
+
+``` vb: example.bas
+' 使用側
+Dim comp As IComparator
+Set comp = New MyComparator
+Dim sortedWithComp As Variant
+sortedWithComp = SortArrayInPlace(arr, comp)
+```
+
+5. 補足
+
+- `SortArrayInPlace()` / `SortCollection()` は元の並びを変えず、新しい配列／Collection を返します。
+- オブジェクトを比較する場合は、`IComparator` を必ず提供してください。（渡さないとエラーになります。）
+
 ## OSS プロジェクトガイドライン
 
 このプロジェクトはオープンソースソフトウェア (OSS) として運用されています。
