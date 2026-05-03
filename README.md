@@ -43,7 +43,7 @@ Set sortedColl = SortCollection(coll, Nothing)
 Implements IComparator
 
 Private Function IComparator_Compare(ByVal a As Variant, ByVal b As Variant) As Integer
-    ' Customized Comparation
+    ' Customized comparision
     If a < b Then
         IComparator_Compare = -1
     ElseIf a > b Then
