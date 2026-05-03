@@ -7,7 +7,7 @@
     "license": "ISC",
     "dependencies": {
         "excel-types": "1.0.0",
-        "Xlog": "1.0.0"
+        "Xdebug": "1.0.0"
     },
     "devDependencies": {
         "@localsmart/xvba-cli": "^1.0.2"
