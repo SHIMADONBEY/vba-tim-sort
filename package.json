@@ -1,10 +1,9 @@
 {
-    "name": "xvba-app",
-    "version": "1.0.0",
-    "description": "A XVBA App",
-    "main": "index.js",
-    "author": "LocalSmart",
-    "license": "ISC",
+    "name": "vba-tim-sort",
+    "version": "0.1.0",
+    "description": "VBA Tim Sort implementation.",
+    "author": "Shimadonbey",
+    "license": "MIT",
     "dependencies": {
         "excel-types": "1.0.0",
         "Xdebug": "1.0.0"
