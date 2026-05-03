@@ -38,9 +38,7 @@ When possible, include:
 
 ### Security
 
-If you discover a potential security issue, please do not disclose sensitive details in a public issue.
-Please report vulnerabilities via GitHub Private Vulnerability Reporting.
-Maintainers will review reports privately and coordinate fixes and disclosure timing as needed.
+Please see [SECURITY](SECURITY.md)
 
 ### Support Scope
 
