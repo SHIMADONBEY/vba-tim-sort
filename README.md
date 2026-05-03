@@ -22,7 +22,7 @@ arr = Array(5, 2, 9, 1)
 Dim sorted As Variant
 sorted = SortArrayInPlace(arr, Nothing)             ' Ascending
 
-' On Descending
+' To sort in descending order, pass True as the optional third argument.
 Dim sortedDesc As Variant
 sortedDesc = SortArrayInPlace(arr, Nothing, True)   ' Descending
 ```
