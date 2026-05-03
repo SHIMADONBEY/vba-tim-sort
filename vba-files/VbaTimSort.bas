@@ -15,7 +15,7 @@ Private Const INITIAL_RUN_STACK_SIZE As Long = 16
 '/ </param>
 '/ <param name="descending">If True, sorts in descending order. Default is False (ascending order).</param>
 '/ <returns>The sorted array. The original array is not modified in place.</returns>
-Public Function SortArrayInPlace(ByRef arr As Variant, comparator As IComparator, Optional descending As Boolean = False) As Variant
+Public Function SortArrayInPlace(ByRef arr As Variant, ByVal comparator As IComparator, Optional descending As Boolean = False) As Variant
     Dim vNewArray As Variant
     If Not IsArray(arr) Then
         Err.Raise vbObjectError + 7404, "VbaTimSort.SortArrayInPlace", "Input must be an array."
