@@ -45,7 +45,7 @@ End Function
 ' / <param name="comparator">An optional IComparator implementation for custom object comparison.</param>
 ' / <param name="descending">If True, sorts in descending order. Default is False (ascending order).</param>
 ' / <returns>A new Collection containing the sorted elements.</returns>
-Public Function SortCollection(ByRef coll As Collection, comparator As IComparator, Optional descending As Boolean = False) As Collection
+Public Function SortCollection(ByRef coll As Collection, ByVal comparator As IComparator, Optional descending As Boolean = False) As Collection
     If coll.Count = 0 Then
         ' An empty collection is already sorted, so we can return a new empty collection.
         Set SortCollection = New Collection
@@ -71,7 +71,7 @@ End Function
 ' / <summary>
 ' / The core TimSort algorithm that sorts an array in place. This function is called by the public sorting functions after preparing the input array.
 ' / </summary>
-Private Function TimSortCore(ByRef arr As Variant, comparator As IComparator, descending As Boolean) As Variant
+Private Function TimSortCore(ByRef arr As Variant, ByVal comparator As IComparator, ByVal descending As Boolean) As Variant
     If Not IsArray(arr) Then
         Err.Raise vbObjectError + 7404, "VbaTimSort.TimSortCore", "Input must be an array."
     End If
