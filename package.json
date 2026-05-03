@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "description": "VBA Tim Sort implementation.",
     "author": "Shimadonbey.",
-    "license": "MIT License",
+    "license": "MIT",
     "dependencies": {
         "excel-types": "1.0.0",
         "Xdebug": "1.0.0"
