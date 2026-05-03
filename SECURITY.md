@@ -20,7 +20,7 @@ English | [日本語](SECURITY.ja.md)
 - Affected version(s) / tag
 - Short summary of the issue and potential impact
 - Reproduction steps or PoC (or minimal example)
-- Environment (VBA / Excel version, Using OS, platform)
+- Environment (VBA/Excel version, OS, platform)
 - Attachments, logs, screenshots, and PoC if available
 
 
