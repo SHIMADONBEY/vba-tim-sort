@@ -20,10 +20,11 @@ arr = Array(5, 2, 9, 1)
 
 ' 自然順（数値・文字列・日付）でソートする場合は comparator に Nothing を渡す
 Dim sorted As Variant
-sorted = SortArrayInPlace(arr, Nothing)    ' 昇順
+sorted = SortArrayInPlace(arr, Nothing)             ' 昇順
 
 ' 降順にする場合
 Dim sortedDesc As Variant
+sortedDesc = SortArrayInPlace(arr, Nothing, True)   ' 降順
 ```
 
 3. 使い方 （Collection）

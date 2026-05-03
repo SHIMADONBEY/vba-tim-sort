@@ -20,10 +20,11 @@ arr = Array(5, 2, 9, 1)
 
 ' To sort in natural order (numbers, strings, dates), pass `Nothing` to the comparator.
 Dim sorted As Variant
-sorted = SortArrayInPlace(arr, Nothing)    ' Ascending
+sorted = SortArrayInPlace(arr, Nothing)             ' Ascending
 
 ' On Descending
 Dim sortedDesc As Variant
+sortedDesc = SortArrayInPlace(arr, Nothing, True)   ' Descending
 ```
 
 3. Usage （Collection）
