@@ -38,7 +38,8 @@ Set sortedColl = SortCollection(coll, Nothing)
 
 4. IComparator を実装して使う例
 
-``` vb: MyComparator.cls
+``` vb
+' MyComparator.cls
 Implements IComparator
 
 Private Function IComparator_Compare(ByVal a As Variant, ByVal b As Variant) As Integer
@@ -53,8 +54,8 @@ Private Function IComparator_Compare(ByVal a As Variant, ByVal b As Variant) As 
 End Function
 ```
 
-``` vb: example.bas
-' 使用側
+``` vb
+' example.bas
 Dim comp As IComparator
 Set comp = New MyComparator
 Dim sortedWithComp As Variant
