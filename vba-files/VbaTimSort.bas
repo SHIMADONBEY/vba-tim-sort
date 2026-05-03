@@ -19,6 +19,11 @@ Public Function SortArrayInPlace(ByRef arr As Variant, comparator As IComparator
     Dim vNewArray As Variant
     If Not IsArray(arr) Then
         Err.Raise vbObjectError + 7404, "VbaTimSort.SortArrayInPlace", "Input must be an array."
+    ElseIf IsEmptyArray(arr) Then
+        ' An unallocated array is considered empty, so we can return a new empty array.
+        ReDim vNewArray(-1 To -1)
+        SortArrayInPlace = vNewArray
+        Exit Function
     End If
 
     Dim vUb As Long: vUb = UBound(arr)
@@ -27,7 +32,7 @@ Public Function SortArrayInPlace(ByRef arr As Variant, comparator As IComparator
     ReDim vNewArray(0 To vUb - vLb)
     Dim i As Long
     For i = vLb To vUb
-        vNewArray(i - vLb) = arr(i)
+        AssignVariant vNewArray(i - vLb), arr(i)
     Next i
 
     SortArrayInPlace = TimSortCore(vNewArray, comparator, descending)
@@ -51,7 +56,7 @@ Public Function SortCollection(ByRef coll As Collection, comparator As IComparat
     Dim i As Long
     ReDim arr(1 To coll.Count)
     For i = 1 To coll.Count
-        arr(i) = coll(i)
+        AssignVariant arr(i), coll(i)
     Next i
     Dim sortedArr As Variant
     sortedArr = TimSortCore(arr, comparator, descending)
@@ -260,9 +265,10 @@ Private Sub ReverseRange(ByRef arr As Variant, ByVal lo As Long, ByVal hi As Lon
     Dim i As Long: i = lo
     Dim j As Long: j = hi
     Do While i < j
-        Dim temp As Variant: temp = arr(i)
-        arr(i) = arr(j)
-        arr(j) = temp
+        Dim temp As Variant
+        AssignVariant temp, arr(i)
+        AssignVariant arr(i), arr(j)
+        AssignVariant arr(j), temp
         i = i + 1
         j = j - 1
     Loop
@@ -295,7 +301,8 @@ Private Sub BinaryInsertionSort( _
 
     Dim i As Long
     For i = start To hi
-        Dim vPivot As Variant: vPivot = arr(i)
+        Dim vPivot As Variant
+        AssignVariant vPivot, arr(i)
         Dim vLeft As Long: vLeft = lo
         Dim vRight As Long: vRight = i
 
@@ -312,9 +319,9 @@ Private Sub BinaryInsertionSort( _
         ' Shift elements to make room for the pivot.
         Dim j As Long
         For j = i To vLeft + 1 Step -1
-            arr(j) = arr(j - 1)
+            AssignVariant arr(j), arr(j - 1)
         Next j
-        arr(vLeft) = vPivot
+        AssignVariant arr(vLeft), vPivot
     Next i
 
 End Sub
@@ -529,7 +536,7 @@ Private Sub MergeLow( _
 
     Dim i As Long
     For i = 0 To len1 - 1
-        vTemp(i) = arr(base1 + i)
+        AssignVariant vTemp(i), arr(base1 + i)
     Next i
 
     i = 0
@@ -538,10 +545,10 @@ Private Sub MergeLow( _
 
     Do While i < len1 And j < base2 + len2
         If InternalCompare(vTemp(i), arr(j), comparator, descending) <= 0 Then
-            arr(k) = vTemp(i)
+            AssignVariant arr(k), vTemp(i)
             i = i + 1
         Else
-            arr(k) = arr(j)
+            AssignVariant arr(k), arr(j)
             j = j + 1
         End If
         k = k + 1
@@ -549,7 +556,7 @@ Private Sub MergeLow( _
 
     ' Copy remaining elements of vTemp if any
     Do While i < len1
-        arr(k) = vTemp(i)
+        AssignVariant arr(k), vTemp(i)
         i = i + 1
         k = k + 1
     Loop
@@ -589,7 +596,7 @@ Private Sub MergeHigh( _
 
     Dim j As Long
     For j = 0 To len2 - 1
-        vTemp(j) = arr(base2 + j)
+        AssignVariant vTemp(j), arr(base2 + j)
     Next j
 
     Dim i As Long: i = base1 + len1 - 1
@@ -597,10 +604,10 @@ Private Sub MergeHigh( _
     Dim k As Long: k = base2 + len2 - 1
     Do While i >= base1 And j >= 0
         If InternalCompare(arr(i), vTemp(j), comparator, descending) > 0 Then
-            arr(k) = arr(i)
+            AssignVariant arr(k), arr(i)
             i = i - 1
         Else
-            arr(k) = vTemp(j)
+            AssignVariant arr(k), vTemp(j)
             j = j - 1
         End If
         k = k - 1
@@ -608,7 +615,7 @@ Private Sub MergeHigh( _
 
     ' Copy remaining elements of vTemp if any
     Do While j >= 0
-        arr(k) = vTemp(j)
+        AssignVariant arr(k), vTemp(j)
         j = j - 1
         k = k - 1
     Loop
@@ -658,6 +665,32 @@ Private Sub EnsureStackCapacity( _
         ReDim Preserve runLen(0 To newSize - 1)
     End If
 End Sub
+
+'/ <summary>
+'/ Assigns a value to a Variant variable, handling both object references and value types correctly. This is used to ensure that when we copy elements of the array, we maintain the correct semantics for objects and values.
+'/ </summary>
+'/ <param name="target">The Variant variable to which the value will be assigned. This variable will be modified by this function.</param>
+'/ <param name="source">The value to be assigned to the target variable. This can be an object reference or a value type.</param>
+Private Sub AssignVariant(ByRef target As Variant, ByVal source As Variant)
+    If IsObject(source) Then
+        Set target = source
+    Else
+        target = source
+    End If
+End Sub
+
+' Checks whether an array should be treated as empty in this library.
+' This includes unallocated arrays and the sentinel bounds (-1 To -1).
+Private Function IsEmptyArray(ByRef arr As Variant) As Boolean
+    If Not HasArrayAllocated(arr) Then
+        IsEmptyArray = True
+        Exit Function
+    End If
+
+    Dim vLb As Long: vLb = LBound(arr)
+    Dim vUb As Long: vUb = UBound(arr)
+    IsEmptyArray = (vUb < vLb) Or (vLb = -1 And vUb = -1)
+End Function
 
 '/ <summary>
 '/ Checks if a dynamic array has been allocated. This is used to determine whether the run stack arrays have been initialized before trying to use them.

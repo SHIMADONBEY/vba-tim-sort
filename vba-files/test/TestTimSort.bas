@@ -107,8 +107,8 @@ Private Sub Test_EmptyArray()
     ReDim arr(-1 To -1)
     Dim result As Variant
     result = VbaTimSort.SortArrayInPlace(arr, Nothing)
-    Dim passed As Boolean: passed = (UBound(result) - LBound(result) + 1 = 0)
-    RecordResult "Sort_EmptyArray", passed, IIf(passed, "", "Expected empty array")
+    Dim passed As Boolean: passed = (LBound(result) = -1 And UBound(result) = -1)
+    RecordResult "Sort_EmptyArray", passed, IIf(passed, "", "Expected empty array bounds (-1 To -1)")
 End Sub
 
 Private Sub Test_SingleElement()
