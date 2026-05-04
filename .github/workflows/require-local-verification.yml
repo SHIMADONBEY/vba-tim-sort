@@ -1,0 +1,17 @@
+name: Require Local Verification
+
+on:
+  pull_request:
+
+jobs:
+  require-local-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for local-verified label
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const labels = (context.payload.pull_request.labels || []).map(l => l.name);
+            if (!labels.includes('local-verified')) {
+              throw new Error('PR must have the "local-verified" label indicating local verification.');
+            }
