@@ -15,11 +15,10 @@
 
 ## Local verification (quick guide)
 1. Checkout repository on a Windows machine.
-2. Install dependencies: npm ci
-3. Export `vba-files/` into `test-runner.xlsb` (example): `npx xvba export --src vba-files --target test-runner.xlsb` (Confirm actual xvba-cli subcommand with `npx xvba --help`.)
-4. Run the test script (example): `powershell -ExecutionPolicy Bypass -File .github/scripts/run-tests.ps1`
-- `test-result.json` is expected as output.
-- Exit code `0` indicates pass.
+2. Export `vba-files/` into `test-runner.xlsb` (example): `npx @localsmart/xvba-cli export --src vba-files --target test-runner.xlsb` (Confirm actual xvba-cli subcommand with `npx xvba --help`.)
+3. Run the test script (example): `powershell -ExecutionPolicy Bypass -File .github/scripts/run-tests.ps1`
+    - `test-result.json` is expected as output.
+    - Exit code `0` indicates pass.
 
 ## Labeling (how-to)
 - After successful local verification, the PR author or reviewer should add the `local-verified` label.
@@ -49,13 +48,12 @@
 
 ## ローカル検証手順（概要）
 1. Windows 環境でリポジトリをチェックアウト
-2. 依存をインストール: `npm ci`
-3. vba-files を test-runner.xlsb に反映
-（例）: `npx xvba export --src vba-files --target test-runner.xlsb`（`xvba-cli` のコマンドは環境に合わせて確認してください）
-4. テストを実行
+2. vba-files を test-runner.xlsb に反映
+（例）: `npx @localsmart/xvba-cli export --src vba-files --target test-runner.xlsb`（`xvba-cli` のコマンドは環境に合わせて確認してください）
+3. テストを実行
 （例）: `powershell -ExecutionPolicy Bypass -File .github/scripts/run-tests.ps1`
-- `test-result.json` を出力する想定
-- Exit code `0` が合格
+    - `test-result.json` を出力する想定
+    - Exit code `0` が合格
 
 ## ラベル付与方法
 - ローカル検証が合格したら PR 作成者またはレビュワーが `local-verified` ラベルを付与してください。
