@@ -54,7 +54,7 @@ PS は「VBA が出力した JSON を信頼する」方針です。成功時は 
 
 `test-result.{timestamp}.{runId}.json` に`test-runner.xlsb` のテスト結果が出力されます。
 
-エラーが発生した場合は、`test-result.{timestamp}.{runId}.json.writeerror.json` が出力されることもあります。
+エラーが発生した場合は、`test-result.{timestamp}.{runId}.json.writerror.json` が出力されることもあります。
 
 #### テスト結果コード
 |終了コード|内容|
