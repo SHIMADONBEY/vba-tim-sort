@@ -64,5 +64,5 @@ PS は「VBA が出力した JSON を信頼する」方針です。成功時は 
 |`3`  |`test-runner.xlsb` マクロの実行エラー|
 |`4`  |`test-runner.xlsb` 取り込みエラー|
 |`5`  |`test-runner.xlsb` ワークブックなし|
-|`7`  |`test-result.{timestamp}.{runid}.json` 書き込み失敗|
+|`7`  |`test-result.{timestamp}.{runid}.json` が未生成、または JSON 不正・切り詰め等により結果を正しく読み取れない|
 
