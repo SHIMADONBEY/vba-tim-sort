@@ -128,7 +128,7 @@ try {
 
     if ($null -eq $json) {
       Write-ResultAndExit @{ error = "invalid_json_or_truncated"; message = "Could not parse JSON or file truncated"; timestamp = (Get-Date).ToString("o") } 7
-      return
+      Exit $global:__ResultExitCode
     }
 
     # Determine pass/fail from JSON content, with fallbacks to the macro return value or default to false. This allows the VBA macro to have control over the test result while still providing a fallback mechanism in case the JSON output is not as expected.
@@ -143,7 +143,7 @@ try {
     "$time Test passed; keeping VBA-authored result file as authoritative: $RunOutPath" | Out-File -FilePath .\test-result.write-debug.log -Append -Encoding utf8
     $global:__ResultWritten = $true
     $global:__ResultExitCode = 0
-    return
+    Exit $global:__ResultExitCode
     }
 
     # If the test failed, write a supplementary result file on the PowerShell side (including the raw content)
@@ -152,12 +152,12 @@ try {
 
     # Serialize and pass it (Write-ResultAndExit expects a string)
     Write-ResultAndExit ($out | ConvertTo-Json -Depth 10 -Compress) 2
-    return
+    Exit $global:__ResultExitCode
   } catch {
     # If an exception occurs during the COM interaction or macro execution, we catch it and write a structured error result with details about the exception. This ensures that even if something goes wrong, we can capture the error information in a consistent format for debugging and analysis.
     $err = @{ error = "macro_exception"; message = $_.Exception.Message; stack = $_.Exception.StackTrace; macro = $Macro; timestamp = (Get-Date).ToString("o") }
     Write-ResultAndExit $err 3
-    return
+    Exit $global:__ResultExitCode
   } finally {
     # COM cleanup (this runs even after Write-ResultAndExit)
     Write-Host "Cleaning up COM objects..."
