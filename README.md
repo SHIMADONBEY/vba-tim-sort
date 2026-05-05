@@ -85,7 +85,7 @@ By using, modifying, or redistributing this project, you agree to follow that li
 This project uses the following branches:
 
 |Name|Description|
-|===|===|
+|---|---|
 |`main`|Stable release branch. Do not commit directly. Releases are tagged after merging into `main`.|
 |`develop`|Development integration branch for the next release.|
 |`archive`|Storage branch for legacy code and framework code.|
