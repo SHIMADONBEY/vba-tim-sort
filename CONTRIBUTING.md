@@ -33,7 +33,14 @@ NOTE: Do not include confidential information in test results, logs, or test cod
 
 ### About `test-runner.xlsb`
 
-- This repository manages `test-runner.xlsb` with Git LFS. Before working locally, run git lfs install to enable LFS. After enabling LFS, commit changes to `.gitattributes`.
+- This repository manages `test-runner.xlsb` with Git LFS. 
+- Before working locally, run git lfs install to enable LFS. After enabling LFS, commit changes to `.gitattributes`.
+```bash
+git lfs install        # one-time per environment
+git fetch --all        # fetch LFS pointers
+git lfs pull           # download LFS objects for the current checkout
+```
+
 - Direct updates to the binary require approval from the repository owner (@Shimadonbey). If an update is necessary, include the update reason and local verification logs in the PR.
 - Official builds are also distributed via GitHub Releases.
 
