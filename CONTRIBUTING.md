@@ -22,6 +22,51 @@ Provide clear instructions for making changes, running local verification, and r
 - PowerShell trusts the JSON produced by VBA as authoritative on success. Do not overwrite VBA-authored output for successful runs.
 - `Write-ResultAndExit` is intended only as a fallback to write results when VBA did not produce a stable result (see `.github/scripts/run-tests-core.ps1`).
 
+### Before creating a Pull Request
+- Fetch and merge/rebase the latest develop and verify behaviour locally. Ensure the run passes using the Local testing instructions.
+- Attach the following to the Pull Request:
+- Test result: `test-result.{timestamp}.{runId}.json`
+- Test logs: `test-result.log or test-result.write-debug.log`
+- SHA256 hash of the `test-runner.xlsb` used for verification (see command examples below)
+
+NOTE: Do not include confidential information in test results, logs, or test code.
+
+### About `test-runner.xlsb`
+
+- This repository manages `test-runner.xlsb` with Git LFS. Before working locally, run git lfs install to enable LFS. After enabling LFS, commit changes to `.gitattributes`.
+- Direct updates to the binary require approval from the repository owner (@Shimadonbey). If an update is necessary, include the update reason and local verification logs in the PR.
+- Official builds are also distributed via GitHub Releases.
+
+#### Hash check examples
+
+- PowerShell:
+``` powershell
+Get-FileHash .\test-runner.xlsb -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+```
+
+- Linux / macOS:
+``` bash
+sha256sum test-runner.xlsb | cut -d' ' -f1
+```
+
+#### Git LFS setup example
+
+``` bash
+git lfs install
+git lfs track "test-runner.xlsb"
+git add .gitattributes
+git add test-runner.xlsb
+git commit -m "Track test-runner.xlsb with Git LFS"
+git push
+```
+
+### Pull Request pre-checklist
+
+- [ ] Have you documented the purpose and related Issues?
+- [ ] Have you incorporated the latest develop changes and resolved conflicts?
+- [ ] Have you attached local test results (logs and JSON)?
+- [ ] If you updated the binary, do you have maintainer approval?
+
 ### Test & review flow
 - Follow "Local testing" below to run tests locally.
 - A test is considered successful if the generated `test-result.{timestamp}.{runId}.json` contains `"passed": true`.
