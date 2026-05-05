@@ -1,0 +1,25 @@
+name: block-archive-branch
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - develop
+      - main
+
+jobs:
+  check_source_branch:
+    name: block-archive-branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR source branch
+        env:
+          PR_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          echo "PR source branch: $PR_HEAD_REF"
+          # Disallow branches starting with archive/ (adjust the pattern as needed)
+          if [[ "$PR_HEAD_REF" == archive/* || "$PR_HEAD_REF" == "archive" ]]; then
+            echo "ERROR: Pull requests originating from branches named 'archive/*' are blocked from merging into develop/main."
+            echo "If you need to restore files from the archive branch, follow the project procedure or contact maintainers."
+            exit 1
+          fi
+          echo "OK: source branch allowed."
