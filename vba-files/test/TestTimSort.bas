@@ -495,11 +495,12 @@ Public Function RunAll_Headless(ByVal outPath As String) As Boolean
     Test_Error_NonArray
     Test_Error_ObjectWithoutComparator
 
-    WriteSummary
-
-    ' Build JSON object
+    ' Build JSON object before WriteSummary appends non-result rows
     Dim json As String
     json = BuildResultsJson()
+
+    WriteSummary
+
     ' Write UTF-8 file using ADODB.Stream
     WriteUtf8File outPath, json
 
