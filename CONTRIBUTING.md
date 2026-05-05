@@ -34,7 +34,7 @@ NOTE: Do not include confidential information in test results, logs, or test cod
 ### About `test-runner.xlsb`
 
 - This repository manages `test-runner.xlsb` with Git LFS. 
-- Before working locally, run git lfs install to enable LFS. After enabling LFS, commit changes to `.gitattributes`.
+- Before working locally, run `git lfs install` to enable LFS (one-time per environment), then run `git lfs pull` to download LFS objects. Only commit changes to `.gitattributes` if you are updating LFS tracking patterns.
 ```bash
 git lfs install        # one-time per environment
 git fetch --all        # fetch LFS pointers
