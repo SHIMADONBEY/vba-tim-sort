@@ -80,20 +80,20 @@ try {
     $importScript = Join-Path $scriptDir "import-vba-into-workbook.ps1"
     if (-not (Test-Path $importScript)) {
       Write-ResultAndExit @{ error = "importer_missing"; path = $importScript; timestamp = (Get-Date).ToString("o") } 4
-      return
+      Exit $global:__ResultExitCode
     }
     & $importScript -Workbook $Workbook -VbaFolder "vba-files" -RemoveExisting
     $ec = $LASTEXITCODE
     if ($ec -ne 0) {
       Write-ResultAndExit @{ error = "import_failed"; exit = $ec; timestamp = (Get-Date).ToString("o") } 4
-      return
+      Exit $global:__ResultExitCode
     }
   }
 
   $fullPath = Resolve-Path -Path $Workbook -ErrorAction SilentlyContinue
   if (-not $fullPath) {
     Write-ResultAndExit @{ error = "workbook_not_found"; workbook = $Workbook; timestamp = (Get-Date).ToString("o") } 5
-    return
+    Exit $global:__ResultExitCode
   }
 
   # COM interaction to open Excel, run the specified macro, and handle the output. The macro is expected to write its results to $RunOutPath, which this script will monitor and read. The script also includes robust error handling and cleanup to ensure that COM objects are released properly.
