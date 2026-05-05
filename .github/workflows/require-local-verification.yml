@@ -15,14 +15,14 @@ jobs:
         with:
           script: |
             const prNumber = context.payload.pull_request ? context.payload.pull_request.number : context.issue.number;
-            console.log('Checking PR number:', prNumber);
+            console.debug('Checking PR number:', prNumber);
             const res = await github.rest.issues.listLabelsOnIssue({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber
             });
             const labels = res.data.map(l => l.name);
-            console.log('Labels returned by API:', labels);
+            console.debug('Labels returned by API:', labels);
             if (!labels.includes('local-verified')) {
               throw new Error('PR must have the "local-verified" label indicating local verification.');
             }
