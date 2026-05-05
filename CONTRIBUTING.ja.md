@@ -26,6 +26,59 @@ PS は「VBA が出力した JSON を信頼する」方針です。成功時は 
 
 `Write-ResultAndExit` の役割は「フォールバックで結果を書く」ことに限定します（参照: .github/scripts/run-tests-core.ps1）。
 
+### Pull-Request 作成前に対処してほしいこと
+
+最新の `develop` ブランチをフェッチ・マージ／リベースし、最新コードを取り込んだうえで動作検証を行ってください。
+[ローカルテスト](#ローカルテストの方法)で必ず合格した状態にしてください。
+
+Pull-Request に以下を添付してください。
+
+- テスト結果: `test-result.{timestamp}.{runId}.json`
+- テストログ: `test-result.log` または、`test-result.write-debug.log`
+- テスト評価で使った `test-runner.xlsb` のSHA256ハッシュ（下記コマンド参照）
+
+NOTE: テスト結果、テストログ、テストコード類には*機密情報を載せない*でください。
+
+#### `test-runner.xlsb` について
+
+このリポジトリでは `test-runner.xlsb` をGit LFS で管理します。
+ローカルで作業する前に `git lfs install` を実行し、LFS を有効にしてください。LFS 設定を行ったら `.gitattributes` の変更をコミットしてください。
+
+ファイルの直接更新はリポジトリ所有者（@Shimadonbey）の承認が必要です。
+更新が必要な場合は、PRに更新理由とローカル検証ログを添えてください。
+
+公式ビルドはGitHub Releases にも配布します。
+
+##### ハッシュ確認例
+
+- Powershell
+``` powershell
+Get-FileHash .\test-runner.xlsb -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+```
+
+- Linux / macOS
+``` bash
+sha256sum test-runner.xlsb | cut -d' ' -f1
+```
+
+##### Git LFS の導入
+
+``` bash
+git lfs install
+git lfs track "test-runner.xlsb"
+git add .gitattributes
+git add test-runner.xlsb
+git commit -m "Track test-runner.xlsb with Git LFS"
+git push
+```
+
+#### Pull-Request 事前チェックリスト
+
+- [ ] 目的・関連Issues に記載済みか？
+- [ ] 最新の `develop` ブランチの内容を反映した状態にし、競合が起きないようにしているか？
+- [ ] ローカルテスト結果: 実行ログ・JSON を添付しているか。
+- [ ] バイナリ更新: 必要ならメンテナ承認済みか。
+
 ### テスト・レビュー手順
 
 [ローカルテストの方法](#ローカルテストの方法) に従ってローカルテストを実行してください。
