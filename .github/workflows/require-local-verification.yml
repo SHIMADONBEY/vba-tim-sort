@@ -12,7 +12,13 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const labels = (context.payload.pull_request.labels || []).map(l => l.name);
+            const prNumber = context.payload.pull_request ? context.payload.pull_request.number : context.issue.number;
+            const res = await github.rest.issues.listLabelsOnIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber
+            });
+            const labels = res.data.map(l => l.name);
             if (!labels.includes('local-verified')) {
               throw new Error('PR must have the "local-verified" label indicating local verification.');
             }
