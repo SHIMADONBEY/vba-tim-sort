@@ -576,11 +576,18 @@ Private Sub WriteUtf8File(ByVal path As String, ByVal content As String)
             .Close
         End With
         Set stream = Nothing
-    On Error Resume Next
-        ' Atomic move: first write to temp file, then move to target path to avoid partial writes
+
+        ' Atomic move: first write to temp file, then move to target path to avoid partial writes.
+        ' Keep normal error handling so delete/move failures are reported to the caller.
         Dim fso As Object: Set fso = CreateObject("Scripting.FileSystemObject")
+        If Not fso.FileExists(tmpPath) Then
+            Err.Raise vbObjectError + 1000, "WriteUtf8File", "Temporary file was not created: " & tmpPath
+        End If
         If fso.FileExists(path) Then fso.DeleteFile path
         fso.MoveFile tmpPath, path
+        If Not fso.FileExists(path) Then
+            Err.Raise vbObjectError + 1001, "WriteUtf8File", "Failed to move temporary file to target path: " & path
+        End If
         Set fso = Nothing
     Exit Sub
 ErrHandler:
