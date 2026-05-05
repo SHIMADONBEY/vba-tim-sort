@@ -513,7 +513,7 @@ ErrHandler:
     On Error Resume Next
     Dim errObj As String
     errObj = "Error " & Err.Number & ": " & Err.Description
-    WriteUtf8File outPath, "{""error"": true, ""message"": """ & Replace(errObj, """", """""") & """}"
+    WriteUtf8File outPath, "{""error"": true, ""message"": """ & JsonEscape(errObj) & """}"
 End Function
 
 ' -- Helpers to produce JSON and write UTF-8 --
@@ -527,15 +527,35 @@ Private Function BuildResultsJson() As String
     Dim idx As Long: idx = 0
     For i = 2 To lastRow
         Dim t As String, s As String, m As String
-        t = Replace(ws.Cells(i, 1).Value, """", """""")
-        s = Replace(ws.Cells(i, 2).Value, """", """""")
-        m = Replace(CStr(ws.Cells(i, 3).Value), """", """""")
+        t = JsonEscape(CStr(ws.Cells(i, 1).Value))
+        s = JsonEscape(CStr(ws.Cells(i, 2).Value))
+        m = JsonEscape(CStr(ws.Cells(i, 3).Value))
         items(idx) = "{""testName"":""" & t & """, ""status"":""" & s & """, ""message"":""" & m & """}"
         idx = idx + 1
     Next i
     Dim body As String
     body = "[" & Join(items, ",") & "]"
     BuildResultsJson = "{""passed"":" & IIf(mFailCount = 0, "true", "false") & ", ""passCount"":" & CStr(mPassCount) & ", ""failCount"":" & CStr(mFailCount) & ", ""results"": " & body & "}"
+End Function
+
+' JSON-escape helper: escapes backslash, quotes and common control chars
+Private Function JsonEscape(ByVal s As String) As String
+    If Len(s) = 0 Then
+        JsonEscape = ""
+        Exit Function
+    End If
+
+    ' Escape existing backslashes first so original backslashes become \\
+    s = Replace(s, "\", "\\")
+    ' Escape double quotes (insert backslash + quote)
+    s = Replace(s, """", "\""")
+    ' Normalize CR/LF/CR/LF -> \n and tabs -> \t
+    s = Replace(s, vbCrLf, "\n")
+    s = Replace(s, vbCr, "\n")
+    s = Replace(s, vbLf, "\n")
+    s = Replace(s, vbTab, "\t")
+
+    JsonEscape = s
 End Function
 
 Private Sub WriteUtf8File(ByVal path As String, ByVal content As String)
