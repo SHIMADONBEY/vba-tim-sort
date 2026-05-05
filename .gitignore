@@ -7,6 +7,12 @@ logs
 /xvba_excel_backup
 .gitignore
 
+# Test result files
+test-result.*.json
+
+# log files
+*.log
+
 # XVBA Module files not to be included in the repository.
 /xvba_modules
 config.json

@@ -1,0 +1,54 @@
+name: Create release archive
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release-${{ github.ref }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify running on main
+        run: |
+          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
+            echo "This workflow must run on refs/heads/main only."
+            exit 1
+          fi
+
+      - name: Create release zip (respects .gitattributes export-ignore)
+        run: |
+          ZIPNAME="release-${{ github.run_number }}-${{ github.sha }}.zip"
+          git archive --format=zip --worktree-attributes --output="$ZIPNAME" HEAD
+          echo "Created $ZIPNAME"
+          ls -l "$ZIPNAME"
+
+      - name: Compute SHA256 checksum
+        run: |
+          ZIPFILE=$(ls release-*.zip)
+          sha256sum "$ZIPFILE" > "$ZIPFILE.sha256"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-zip
+          path: |
+            release-*.zip
+            release-*.zip.sha256
+
+      - name: Create GitHub Release and attach (optional)
+        if: startsWith(github.ref, 'refs/heads/main')
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref == 'refs/heads/main' && github.sha || github.run_number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
