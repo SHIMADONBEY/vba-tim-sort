@@ -94,7 +94,7 @@ sortedWithComp = SortArrayInPlace(arr, comp)
 
 #### テストランナー (`test-runner.xlsb`) の取り扱い
 
-- 本リポジトリではテスト実行用バイナリ `test-runner.xlsb` を配布します。。ローカル作業前に `git lfs install` を実行し、LFS 設定を行ったら `.gitattributes` の変更をコミットしてください。未設定の場合は `CONTRIBUTING.ja.md` を参照してください。
+- 本リポジトリではテスト実行用バイナリ `test-runner.xlsb` を配布します。ローカル作業前に `git lfs install` を実行し、LFS 設定を行ったら `.gitattributes` の変更をコミットしてください。未設定の場合は `CONTRIBUTING.ja.md` を参照してください。
 - PR 作成前に必ず最新の `develop` を取り込み、ローカルで検証を実行してください。
 - PR には以下を添付してください：
   - ローカル実行ログ（テキスト） — 実行した手順と結果（成功/失敗・エラー出力）  

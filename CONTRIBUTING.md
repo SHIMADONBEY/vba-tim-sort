@@ -25,9 +25,9 @@ Provide clear instructions for making changes, running local verification, and r
 ### Before creating a Pull Request
 - Fetch and merge/rebase the latest develop and verify behaviour locally. Ensure the run passes using the Local testing instructions.
 - Attach the following to the Pull Request:
-- Test result: `test-result.{timestamp}.{runId}.json`
-- Test logs: `test-result.log or test-result.write-debug.log`
-- SHA256 hash of the `test-runner.xlsb` used for verification (see command examples below)
+  - Test result: `test-result.{timestamp}.{runId}.json`
+  - Test logs: `test-result.log or test-result.write-debug.log`
+  - SHA256 hash of the `test-runner.xlsb` used for verification (see command examples below)
 
 NOTE: Do not include confidential information in test results, logs, or test code.
 

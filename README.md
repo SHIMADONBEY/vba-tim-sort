@@ -92,7 +92,7 @@ This project uses the following branches:
 
 #### Test runner (`test-runner.xlsb`) handling
 
-- The repository distributes a test runner binary `test-runner.xlsb`. To avoid repository bloat, this file is managed via Git LFS. Before working locally, run `git lfs install`; if you enable LFS, commit the resulting `.gitattributes` change. See [CONTRIBUTING](CONTRIBUTING.md) for details.
+- The repository distributes a test runner binary `test-runner.xlsb`. To avoid repository bloat, this file is managed via Git LFS. Before working locally, install/configure Git LFS with `git lfs install`, and if the file is not present locally, fetch LFS-managed content with `git lfs pull`. Commit `.gitattributes` only when intentionally changing LFS tracking patterns. See [CONTRIBUTING](CONTRIBUTING.md) for details.
 - Before opening a PR, always update from the latest `develop` and run local verification.
 - Attach the following to your PR:
   - Local run logs (text) — the steps you ran and the results (success/failure and any error output)
@@ -116,7 +116,7 @@ main and develop are protected from force-push.
 Because CI execution is limited for this project, local verification is mandatory.
 See [CONTRIBUTING](CONTRIBUTING.md) for full instructions.
 
-When updating the test runner binary, include the update reason, local verification logs, and the SHA256 of the `test-runner.xlsb` used for verification in the PR, then obtain approval from the repository owner. 
+When updating the test runner binary, include the update reason, local verification logs, and the SHA256 of the `test-runner.xlsb` used for verification in the PR, then obtain approval from the repository owner.
 Always ensure the attached SHA is computed from the exact file you used to verify. Confirm that attached logs do not contain sensitive information before publishing.
 
 ##### Merge policy
