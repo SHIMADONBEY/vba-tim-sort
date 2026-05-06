@@ -12,6 +12,38 @@ Provide clear instructions for making changes, running local verification, and r
 - Close all running Excel instances before running tests.
 - Run commands from the repository root (the working directory affects test output paths).
 
+## VBA coding rules
+
+The following rules apply to all VBA source files under `vba-files/`.
+Production files (everything except `vba-files/test/`) are subject to stricter checks enforced by the **vba-lint** CI job.
+
+### Production code (`vba-files/` root — strict rules)
+
+ | Rule | Detail |
+ |---|---|
+ | `Option Explicit` required | Every module must declare `Option Explicit` at the top. |
+ | No `On Error Resume Next` | Use structured error handling (`On Error GoTo label`) instead. |
+ | No `Stop` | Remove all `Stop` statements before merging. |
+ | No `Debug.Print` | Remove all debug output before merging. |
+ | No Windows API calls | For Excel for Mac compatibility, do not use external API declarations (e.g. `Declare` / `Declare PtrSafe` or `Lib "kernel32"` / `"user32"` etc.). Prefer pure VBA and Excel built-in features. |
+ | No trailing whitespace | Lines must not end with spaces or tabs. |
+ | File ends with a newline | Each file must end with a single newline character (LF). |
+
+### Test code (`vba-files/test/` — relaxed rules)
+
+Test modules are only checked for basic text hygiene (trailing whitespace, final newline).
+`Debug.Print`, `Stop`, and `On Error Resume Next` are permitted in test code.
+
+### What the CI checks automatically
+
+The **vba-lint** workflow (`.github/workflows/vba-lint.yml`) runs on every pull request that touches `vba-files/`.
+It runs `.github/scripts/lint-vba.sh` on an Ubuntu runner and produces file-and-line annotations directly in the PR.
+
+The following items are **not** checked by CI and require local Windows/Excel verification (see the `local-verified` label requirement):
+- Runtime correctness and sorting behaviour
+- Excel API compatibility
+- Test suite results (`test-result.json`)
+
 ## About making changes
 
 ### Changing VBA
@@ -21,6 +53,58 @@ Provide clear instructions for making changes, running local verification, and r
 ### Changing PowerShell scripts
 - PowerShell trusts the JSON produced by VBA as authoritative on success. Do not overwrite VBA-authored output for successful runs.
 - `Write-ResultAndExit` is intended only as a fallback to write results when VBA did not produce a stable result (see `.github/scripts/run-tests-core.ps1`).
+
+### Before creating a Pull Request
+- Fetch and merge/rebase the latest develop and verify behaviour locally. Ensure the run passes using the Local testing instructions.
+- Attach the following to the Pull Request:
+  - Test result: `test-result.{timestamp}.{runId}.json`
+  - Test logs: `test-result.log or test-result.write-debug.log`
+  - SHA256 hash of the `test-runner.xlsb` used for verification (see command examples below)
+
+NOTE: Do not include confidential information in test results, logs, or test code.
+
+### About `test-runner.xlsb`
+
+- This repository manages `test-runner.xlsb` with Git LFS. 
+- Before working locally, run `git lfs install` to enable LFS (one-time per environment), then run `git lfs pull` to download LFS objects. Only commit changes to `.gitattributes` if you are updating LFS tracking patterns.
+```bash
+git lfs install        # one-time per environment
+git fetch --all        # fetch LFS pointers
+git lfs pull           # download LFS objects for the current checkout
+```
+
+- Direct updates to the binary require approval from the repository owner ([@Shimadonbey](https://github.com/SHIMADONBEY)). If an update is necessary, include the update reason and local verification logs in the PR.
+- Official builds are also distributed via GitHub Releases.
+
+#### Hash check examples
+
+- PowerShell:
+``` powershell
+Get-FileHash .\test-runner.xlsb -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+```
+
+- Linux / macOS:
+``` bash
+sha256sum test-runner.xlsb | cut -d' ' -f1
+```
+
+#### Git LFS setup example
+
+``` bash
+git lfs install
+git lfs track "test-runner.xlsb"
+git add .gitattributes
+git add test-runner.xlsb
+git commit -m "Track test-runner.xlsb with Git LFS"
+git push
+```
+
+### Pull Request pre-checklist
+
+- [ ] Have you documented the purpose and related Issues?
+- [ ] Have you incorporated the latest develop changes and resolved conflicts?
+- [ ] Have you attached local test results (logs and JSON)?
+- [ ] If you updated the binary, do you have maintainer approval?
 
 ### Test & review flow
 - Follow "Local testing" below to run tests locally.

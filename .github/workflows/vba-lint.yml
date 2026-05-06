@@ -1,0 +1,25 @@
+name: VBA Lint
+
+on:
+  pull_request:
+    paths:
+      - 'vba-files/**'
+      - '.github/scripts/lint-vba.sh'
+      - '.github/workflows/vba-lint.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  vba-lint:
+    name: vba-lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make lint script executable
+        run: chmod +x .github/scripts/lint-vba.sh
+
+      - name: Run VBA lint checks
+        run: .github/scripts/lint-vba.sh
