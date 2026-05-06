@@ -144,6 +144,83 @@ SemVer 推奨（`v1.2.3` タグ）とします。
 
 長期間のブランチは避け、早めに統合してコンフリクトを最小化します。
 
+#### 配布・リリースガイド
+
+このプロジェクトはリリースアーティファクトがプロダクションコードと必要なライセンス/通知ファイルのみを含むよう、厳密なリリース手順を推奨しています。
+開発専用フレームワークコード（`archive` ブランチ内）はリリースに含めないでください。
+
+リリースに含めるもの
+- `VbaTimSort.bas`
+- `IComparator.cls`
+- README
+- LICENSE
+- `THIRD_PARTY_NOTICES.md`
+- テストコード(`vba-files/test` 配下)
+
+含めてはいけないもの
+- `xvba_modules/` や `archive` ブランチにのみ存在する開発用コード（例：`XDebug` 等）
+
+
+##### リリース手順
+
+1. 最新の`develop` ブランチをPull します。
+
+``` bash
+git fetch origin
+git checkout develop
+git pull origin develop
+# HEADコミットを確認
+git rev-parse --short HEAD
+```
+
+2. リリース用ブランチを作成します。
+
+``` bash
+git checkout -b release/v1.0.0
+```
+
+3. 必要に応じてCHANGELOG等の情報を更新し、Commitします。
+
+4. 更新確認後、Push します。
+
+``` bash
+git push -u origin release/v1.0.0
+```
+
+5. ローカルでアーカイブを作成します。 (`.gitattributes` のexport-ignore を利用します。)
+
+``` bash
+git archive --format=zip --worktree-attributes --output=release-test.zip HEAD
+```
+
+6. 内容物を確認します。
+
+``` bash
+unzip -l release-test.zip
+
+# 内容物にxvba_module が含まれていないか確認してください。
+
+unzip -l release-test.zip | grep -E '^ *[0-9]+' | awk '{print $4}' | grep -E '^xvba_modules/' || echo "OK: xvba_modules not found"
+```
+
+7. リリースアーカイブとチェックサムを作成します。
+
+``` bash
+git archive --format=zip --worktree-attributes --output=vba-tim-sort-v1.0.0.zip HEAD
+sha256sum vba-tim-sort-v1.0.0.zip > vba-tim-sort-v1.0.0.zip.sha256
+```
+
+8. リリースアーカイブを公開します。`release/v1.0.0` ブランチから、`main`ブランチへマージするPull-Request を発行します。レビュー完了後、バージョン番号のタグをつけ、Squashマージします。
+
+9. マージ後、`main` ブランチの内容を`develop` ブランチにマージします。
+
+``` bash
+git checkout develop
+git pull origin develop
+git merge --no-ff origin/main
+git push origin develop
+```
+
 #### 補足事項
 
 このライブラリではXVBAという開発フレームワークを利用して開発を行っています。
