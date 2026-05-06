@@ -178,7 +178,7 @@ Preparing a release (recommended flow)
    - sha256sum vba-tim-sort-vX.Y.Z.zip > vba-tim-sort-vX.Y.Z.zip.sha256
 
 5. Publish the release
-   - From `release/v1.0.0`, open a Pull Request into `main`. After review, merge the PR according to team policy: either “Squash and merge” (recommended) or “Create a merge commit”. After merging, create a release tag (for example `v1.0.0`) and publish the release artifacts (the repository’s release workflow will publish artifacts on main pushes if configured).
+   - From `release/v1.0.0`, open a Pull Request into `main`. After review, merge the PR according to team policy: either “Squash and merge” (recommended) or “Create a merge commit”. After merging, create a release tag (for example `v1.0.0`) and publish the release artifacts.
 
 Checklist before releasing
 - [ ] The archive contains only intended production files (no xvba_modules or files from `archive` branch).
@@ -189,7 +189,7 @@ Checklist before releasing
 - [ ] Local verification (if required) completed and `local-verified` label added to the release PR.
 
 Automation notes
-- The repository contains a release workflow (.github/workflows/release.yml) that runs on pushes to `main` and uses `git archive --worktree-attributes`. Ensure `.gitattributes` correctly marks archive-only files (e.g. `xvba_modules/** export-ignore`) so `git archive` excludes them.
+- The repository contains a release workflow (.github/workflows/release.yml) that runs on tag pushes matching `v*` and can also be triggered manually via workflow_dispatch. The workflow uses git archive `--worktree-attributes` to create the release archive and uploads artifacts to the corresponding GitHub Release. Ensure `.gitattributes` correctly marks archive-only files (e.g. `xvba_modules/** export-ignore`) so `git archive` excludes them.
 - Consider adding a pre-merge CI check to detect accidental inclusion of `xvba_modules/` in PRs targeting `develop` or `main`. (This is optional and can be added later as an automated safeguard.)
 
 Policies recap
