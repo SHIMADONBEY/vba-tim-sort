@@ -8,6 +8,7 @@
 #   - On Error Resume Next is disallowed
 #   - Stop is disallowed
 #   - Debug.Print is disallowed
+#   - Windows API calls (Declare/Lib) are disallowed (for Excel for Mac compatibility)
 #   - No trailing whitespace
 #   - File must end with a newline
 #
@@ -83,6 +84,15 @@ check_production_file() {
 
     if echo "$stripped" | grep -qiE '^\s*Debug\.Print\b'; then
       err "$file" "$lineno" "Prohibited construct: 'Debug.Print' is not allowed in production code."
+    fi
+
+    # Windows API calls (Declare/Lib) are prohibited for Excel for Mac compatibility
+    if echo "$stripped" | grep -qiE '^\s*(Public\s+|Private\s+)?Declare(\s+PtrSafe)?\b'; then
+      err "$file" "$lineno" "Prohibited construct: Windows API declaration ('Declare' / 'Declare PtrSafe') is not allowed in production code (Excel for Mac compatibility)."
+    fi
+
+    if echo "$stripped" | grep -qiE '\bLib\s+"[^"]+"'; then
+      err "$file" "$lineno" "Prohibited construct: external library binding via 'Lib \"...\"' is not allowed in production code (Excel for Mac compatibility)."
     fi
 
     # Trailing whitespace
