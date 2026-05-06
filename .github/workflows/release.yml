@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag name to release (e.g. v1.2.3). Required for manual runs.'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install git-lfs
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git-lfs
+          git lfs install
+
+      - name: Determine target ref and version
+        id: determine
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            if [ -z "${{ github.event.inputs.tag }}" ]; then
+              echo "Manual run requires 'tag' input" >&2
+              exit 1
+            fi
+            TARGET_REF="refs/tags/${{ github.event.inputs.tag }}"
+            VERSION="${{ github.event.inputs.tag }}"
+          else
+            TARGET_REF="${GITHUB_REF}"
+            VERSION="${GITHUB_REF#refs/tags/}"
+            if [ "$VERSION" = "$GITHUB_REF" ]; then
+              echo "This workflow must be triggered by a tag or provide 'tag' input. Ref: ${GITHUB_REF}" >&2
+              exit 1
+            fi
+          fi
+          echo "TARGET_REF=$TARGET_REF" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_REF }}
+          lfs: true
+          fetch-depth: 0
+
+      - name: Create archive and checksum
+        run: |
+          VERSION=${VERSION}
+          ARCHIVE=vba-tim-sort-${VERSION}.zip
+          git archive --format=zip --worktree-attributes --output="${ARCHIVE}" HEAD
+          sha256sum "${ARCHIVE}" > "${ARCHIVE}.sha256"
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: ${{ env.VERSION }}
+          body: Release ${{ env.VERSION }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload zip asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: vba-tim-sort-${{ env.VERSION }}.zip
+          asset_name: vba-tim-sort-${{ env.VERSION }}.zip
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload checksum
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: vba-tim-sort-${{ env.VERSION }}.zip.sha256
+          asset_name: vba-tim-sort-${{ env.VERSION }}.zip.sha256
+          asset_content_type: text/plain
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

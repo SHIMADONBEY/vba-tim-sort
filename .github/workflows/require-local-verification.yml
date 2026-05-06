@@ -1,0 +1,28 @@
+name: Require Local Verification
+
+permissions:
+  issues: read
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+jobs:
+  require-local-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for local-verified label
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const prNumber = context.payload.pull_request ? context.payload.pull_request.number : context.issue.number;
+            console.debug('Checking PR number:', prNumber);
+            const res = await github.rest.issues.listLabelsOnIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber
+            });
+            const labels = res.data.map(l => l.name);
+            console.debug('Labels returned by API:', labels);
+            if (!labels.includes('local-verified')) {
+              throw new Error('PR must have the "local-verified" label indicating local verification.');
+            }

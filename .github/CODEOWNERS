@@ -1,0 +1,6 @@
+# CODEOWNERS for SHIMADONBEY/vba-tim-sort
+# This file assigns default code owner(s) for the repository.
+# Format: <pattern> <owner1> <owner2>
+
+# Make the repository owner responsible for all files by default.
+* @SHIMADONBEY
