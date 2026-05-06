@@ -17,7 +17,7 @@ Provide clear instructions for making changes, running local verification, and r
 The following rules apply to all VBA source files under `vba-files/`.
 Production files (everything except `vba-files/test/`) are subject to stricter checks enforced by the **vba-lint** CI job.
 
-###  ### Production code (`vba-files/` root — strict rules)
+### Production code (`vba-files/` root — strict rules)
 
  | Rule | Detail |
  |---|---|
