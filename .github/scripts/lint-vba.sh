@@ -32,6 +32,28 @@ err() {
   errors=$((errors + 1))
 }
 
+# Return 0 (true) if the line is a VBA comment-only line.
+# Excludes:
+#   - lines starting with "'" (apostrophe comment)
+#   - lines starting with "Rem " / "REM " etc.
+is_comment_line() {
+  local line="$1"
+  # Normalize CRLF -> LF and then test
+  line="${line%$'\r'}"
+
+  if [[ "$line" =~ ^[[:space:]]*\' ]]; then
+    return 0
+  fi
+  # Case-insensitive "Rem"
+  shopt -s nocasematch
+  if [[ "$line" =~ ^[[:space:]]*rem([[:space:]]+|$) ]]; then
+    shopt -u nocasematch
+    return 0
+  fi
+  shopt -u nocasematch
+  return 1
+}
+
 # Check that a file ends with a newline character.
 check_final_newline() {
   local file="$1"
@@ -52,6 +74,12 @@ check_trailing_whitespace() {
     lineno=$((lineno + 1))
     # Strip CR if present (CRLF files on Linux)
     line="${line%$'\r'}"
+
+    # Skip comment-only lines
+    if is_comment_line "$line"; then
+      continue
+    fi
+
     if [[ "$line" =~ [[:blank:]]$ ]]; then
       err "$file" "$lineno" "Trailing whitespace detected."
     fi
@@ -74,26 +102,46 @@ check_production_file() {
     lineno=$((lineno + 1))
     local stripped="${line%$'\r'}"
 
-    if echo "$stripped" | grep -qiE '^\s*On\s+Error\s+Resume\s+Next'; then
+    # Skip comment-only lines
+    if is_comment_line "$stripped"; then
+      continue
+    fi
+
+    # Case-insensitive matching for VBA keywords
+    shopt -s nocasematch
+
+    if [[ "$stripped" =~ ^[[:space:]]*On[[:space:]]+Error[[:space:]]+Resume[[:space:]]+Next ]]; then
+      shopt -u nocasematch
       err "$file" "$lineno" "Prohibited construct: 'On Error Resume Next' is not allowed in production code."
+      continue
     fi
 
-    if echo "$stripped" | grep -qiE '^\s*Stop\s*$'; then
+    if [[ "$stripped" =~ ^[[:space:]]*Stop[[:space:]]*$ ]]; then
+      shopt -u nocasematch
       err "$file" "$lineno" "Prohibited construct: 'Stop' is not allowed in production code."
+      continue
     fi
 
-    if echo "$stripped" | grep -qiE '^\s*Debug\.Print\b'; then
+    if [[ "$stripped" =~ ^[[:space:]]*Debug\.Print\b ]]; then
+      shopt -u nocasematch
       err "$file" "$lineno" "Prohibited construct: 'Debug.Print' is not allowed in production code."
+      continue
     fi
 
     # Windows API calls (Declare/Lib) are prohibited for Excel for Mac compatibility
-    if echo "$stripped" | grep -qiE '^\s*(Public\s+|Private\s+)?Declare(\s+PtrSafe)?\b'; then
+    if [[ "$stripped" =~ ^[[:space:]]*(Public[[:space:]]+|Private[[:space:]]+)?Declare([[:space:]]+PtrSafe)?\b ]]; then
+      shopt -u nocasematch
       err "$file" "$lineno" "Prohibited construct: Windows API declaration ('Declare' / 'Declare PtrSafe') is not allowed in production code (Excel for Mac compatibility)."
+      continue
     fi
 
-    if echo "$stripped" | grep -qiE '\bLib\s+"[^"]+"'; then
+    if [[ "$stripped" =~ \bLib[[:space:]]+\"[^\"]+\" ]]; then
+      shopt -u nocasematch
       err "$file" "$lineno" "Prohibited construct: external library binding via 'Lib \"...\"' is not allowed in production code (Excel for Mac compatibility)."
+      continue
     fi
+
+    shopt -u nocasematch
 
     # Trailing whitespace
     if [[ "$stripped" =~ [[:blank:]]$ ]]; then
