@@ -97,7 +97,7 @@ This project uses the following branches:
 - Attach the following to your PR:
   - Local run logs (text) — the steps you ran and the results (success/failure and any error output)
   - The SHA256 hash of the `test-runner.xlsb` used for verification (see commands below)
-- Direct updates to `test-runner.xlsb` require approval from the repository owner (@Shimadonbey). If an update is necessary, state the reason in the PR and attach local verification logs.
+- Direct updates to `test-runner.xlsb` require approval from the repository owner ([@Shimadonbey](https://github.com/SHIMADONBEY)). If an update is necessary, state the reason in the PR and attach local verification logs.
 - Official builds may also be published as GitHub Releases.
 
 Hash check examples
