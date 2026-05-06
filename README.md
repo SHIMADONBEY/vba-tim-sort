@@ -78,6 +78,65 @@ The following notes describe common expectations for users and contributors.
 This project is distributed under the terms described in [LICENSE](LICENSE).
 By using, modifying, or redistributing this project, you agree to follow that license.
 
+### Development sources
+
+#### Branch structure
+
+This project uses the following branches:
+
+|Name|Description|
+|---|---|
+|`main`|Stable release branch. Do not commit directly. Releases are tagged after merging into `main`.|
+|`develop`|Development integration branch for the next release.|
+|`archive`|Storage branch for legacy code and framework code.|
+
+#### Test runner (`test-runner.xlsb`) handling
+
+- The repository distributes a test runner binary `test-runner.xlsb`. To avoid repository bloat, this file is managed via Git LFS. Before working locally, install/configure Git LFS with `git lfs install`, and if the file is not present locally, fetch LFS-managed content with `git lfs pull`. Commit `.gitattributes` only when intentionally changing LFS tracking patterns. See [CONTRIBUTING](CONTRIBUTING.md) for details.
+- Before opening a PR, always update from the latest `develop` and run local verification.
+- Attach the following to your PR:
+  - Local run logs (text) — the steps you ran and the results (success/failure and any error output)
+  - The SHA256 hash of the `test-runner.xlsb` used for verification (see commands below)
+- Direct updates to `test-runner.xlsb` require approval from the repository owner (@Shimadonbey). If an update is necessary, state the reason in the PR and attach local verification logs.
+- Official builds may also be published as GitHub Releases.
+
+Hash check examples
+- PowerShell (Windows):
+```powershell
+Get-FileHash test-runner.xlsb -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+```
+#### Operational rules
+
+##### Branch protection
+
+main and develop are protected from force-push.
+
+##### Pull requests
+
+Because CI execution is limited for this project, local verification is mandatory.
+See [CONTRIBUTING](CONTRIBUTING.md) for full instructions.
+
+When updating the test runner binary, include the update reason, local verification logs, and the SHA256 of the `test-runner.xlsb` used for verification in the PR, then obtain approval from the repository owner.
+Always ensure the attached SHA is computed from the exact file you used to verify. Confirm that attached logs do not contain sensitive information before publishing.
+
+##### Merge policy
+
+Feature/issue branches should be merged by squash merge by default.
+Merges from `archive` into `main` or `develop` are disallowed.
+
+##### Versioning
+
+Semantic Versioning (SemVer) is recommended; use tags like `v1.2.3`.
+
+##### Branch lifespan
+
+Avoid long-lived branches; merge early and often to minimize conflicts.
+
+#### Notes
+
+This library is developed using the XVBA framework.
+XVBA framework code is stored on the archive branch and is not included in release artifacts. 
+
 ### Contributing
 
 Contributions are welcome.
