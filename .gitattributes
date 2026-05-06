@@ -13,12 +13,13 @@
 /ribbons/examples/** export-ignore
 /ribbons/images/** export-ignore
 /node_modules/** export-ignore
+/vba-files/test/** export-ignore
 # Exclude repo config and dev manifests (not needed in release zip)
 package.json export-ignore
 package-lock.json export-ignore
 /config.json export-ignore
-# Keep docs, license, core logic, tests, and test-runner by NOT marking them export-ignore:
+# Keep docs, license, core logic, and test-runner by NOT marking them export-ignore:
 # - README.md, README.ja.md, LICENSE, SECURITY*.md, THIRD_PARTY_NOTICES.md
-# - vba-files/ (core logic and tests)
+# - vba-files/ (core logic only; vba-files/test/** is excluded above)
 # - test-runner.xlsb (Excel Integration Examples)
 test-runner.xlsb filter=lfs diff=lfs merge=lfs -text

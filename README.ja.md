@@ -156,9 +156,9 @@ SemVer 推奨（`v1.2.3` タグ）とします。
 - README
 - LICENSE
 - `THIRD_PARTY_NOTICES.md`
-- テストコード(`vba-files/test` 配下)
 
 含めてはいけないもの
+- `vba-files/test/` 配下のテストコード — テスト専用モジュールは開発・検証用であり、エンドユーザー向けの配布物には含めてはいけません。
 - `xvba_modules/` や `archive` ブランチにのみ存在する開発用コード（例：`XDebug` 等）
 
 

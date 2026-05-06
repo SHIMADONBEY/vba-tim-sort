@@ -144,9 +144,9 @@ What to include in release artifacts
 - LICENSE
 - THIRD_PARTY_NOTICES.md
 - examples/ or sample files (if present)
-- test-only modules under vba-files/test
 
 Do NOT include:
+- vba-files/test/ — test-only modules are for development/verification only and must not be shipped to end users.
 - xvba_modules/ or any code that lives only on the `archive` branch (for example: XDebug or other development-only tools).
 
 Why xvba_modules must not be included
