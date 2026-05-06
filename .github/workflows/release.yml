@@ -29,7 +29,7 @@ jobs:
           VERSION=${GITHUB_REF#refs/tags/}
           ARCHIVE=vba-tim-sort-${VERSION}.zip
           git archive --format=zip --worktree-attributes --output="${ARCHIVE}" HEAD
-          sha256sum "${ARCHIVE}" | awk '{print $1}' > "${ARCHIVE}.sha256"
+          sha256sum "${ARCHIVE}" > "${ARCHIVE}.sha256"
 
       - name: Create GitHub Release
         id: create_release
