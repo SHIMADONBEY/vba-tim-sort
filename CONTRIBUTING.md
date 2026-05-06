@@ -17,16 +17,17 @@ Provide clear instructions for making changes, running local verification, and r
 The following rules apply to all VBA source files under `vba-files/`.
 Production files (everything except `vba-files/test/`) are subject to stricter checks enforced by the **vba-lint** CI job.
 
-### Production code (`vba-files/` root — strict rules)
+###  ### Production code (`vba-files/` root — strict rules)
 
-| Rule | Detail |
-|---|---|
-| `Option Explicit` required | Every module must declare `Option Explicit` at the top. |
-| No `On Error Resume Next` | Use structured error handling (`On Error GoTo label`) instead. |
-| No `Stop` | Remove all `Stop` statements before merging. |
-| No `Debug.Print` | Remove all debug output before merging. |
-| No trailing whitespace | Lines must not end with spaces or tabs. |
-| File ends with a newline | Each file must end with a single newline character (LF). |
+ | Rule | Detail |
+ |---|---|
+ | `Option Explicit` required | Every module must declare `Option Explicit` at the top. |
+ | No `On Error Resume Next` | Use structured error handling (`On Error GoTo label`) instead. |
+ | No `Stop` | Remove all `Stop` statements before merging. |
+ | No `Debug.Print` | Remove all debug output before merging. |
++| No Windows API calls | For Excel for Mac compatibility, do not use external API declarations (e.g. `Declare` / `Declare PtrSafe` or `Lib "kernel32"` / `user32"` etc.). Prefer pure VBA and Excel built-in features. |
+ | No trailing whitespace | Lines must not end with spaces or tabs. |
+ | File ends with a newline | Each file must end with a single newline character (LF). |
 
 ### Test code (`vba-files/test/` — relaxed rules)
 
