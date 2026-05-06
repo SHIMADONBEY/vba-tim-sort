@@ -117,20 +117,20 @@ check_production_file() {
       continue
     fi
 
-    if [[ "$stripped" =~ ^[[:space:]]*Debug\.Print\b ]]; then
+    if [[ "$stripped" =~ ^[[:space:]]*Debug\.Print([^[:alnum:]_]|$) ]]; then
       shopt -u nocasematch
       err "$file" "$lineno" "Prohibited construct: 'Debug.Print' is not allowed in production code."
       continue
     fi
 
     # Windows API calls (Declare/Lib) are prohibited for Excel for Mac compatibility
-    if [[ "$stripped" =~ ^[[:space:]]*(Public[[:space:]]+|Private[[:space:]]+)?Declare([[:space:]]+PtrSafe)?\b ]]; then
+    if [[ "$stripped" =~ ^[[:space:]]*(Public[[:space:]]+|Private[[:space:]]+)?Declare([[:space:]]+PtrSafe)?([^[:alnum:]_]|$) ]]; then
       shopt -u nocasematch
       err "$file" "$lineno" "Prohibited construct: Windows API declaration ('Declare' / 'Declare PtrSafe') is not allowed in production code (Excel for Mac compatibility)."
       continue
     fi
 
-    if [[ "$stripped" =~ \bLib[[:space:]]+\"[^\"]+\" ]]; then
+    if [[ "$stripped" =~ (^|[^[:alnum:]_])Lib[[:space:]]+\"[^\"]+\" ]]; then
       shopt -u nocasematch
       err "$file" "$lineno" "Prohibited construct: external library binding via 'Lib \"...\"' is not allowed in production code (Excel for Mac compatibility)."
       continue
