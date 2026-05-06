@@ -90,6 +90,7 @@ sortedWithComp = SortArrayInPlace(arr, comp)
 |---|---|
 |`main`|リリース済みの安定ブランチ。ここに直接コミットしないこと。リリースは `main` へマージ後にタグ付けします。  |
 |`develop`|次回リリースに向けた開発ブランチ。日常の統合先。|
+|`release/vX.Y.Z`|リリース作業ブランチ。`develop`から作成し、Pull-Requestを通して、`main`へマージ（Squash and Merge Commit）し、マージ完了後はブランチ削除と`develop`との同期を行います。|
 |`archive`|保管用ブランチ（古い履歴など）。|
 
 #### テストランナー (`test-runner.xlsb`) の取り扱い

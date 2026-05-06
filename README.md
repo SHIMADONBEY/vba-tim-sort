@@ -88,6 +88,7 @@ This project uses the following branches:
 |---|---|
 |`main`|Stable release branch. Do not commit directly. Releases are tagged after merging into `main`.|
 |`develop`|Development integration branch for the next release.|
+|`release/vX.Y.Z`|Release branch. Create it from `develop`, merge it into `main` via a pull request (using a “squash and merge” commit), and after the merge is complete, delete the branch and sync it with `develop`.|
 |`archive`|Storage branch for legacy code and framework code.|
 
 #### Test runner (`test-runner.xlsb`) handling
