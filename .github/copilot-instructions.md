@@ -1,22 +1,40 @@
-# Copilot Instructions
-This file contains instructions for GitHub Copilot. It uses a YAML front matter header to specify which files the instructions apply to and a description of the instructions. The instructions themselves are written in markdown format.
+# Copilot instructions (vba-tim-sort)
 
-## Basic Usage
+These instructions apply to Copilot code suggestions and Copilot code review for this repository.
 
-- Comment English instructions in the code to guide Copilot's suggestions. If commited by Japanese speakers, the instructions may be in Japanese.
-- Use clear and concise language to describe the desired code behavior or structure.
-- Avoid ambiguous or overly complex instructions that may confuse Copilot.
-- Regularly review and update the instructions as needed to ensure they remain relevant and effective.
+## Primary goal
+Keep this VBA library **portable and embeddable**, including **Excel for Mac** compatibility.
 
-## Visual Basic for Applications (VBA) Specific Instructions
+## Review focus (highest priority)
+1. Enforce the repository VBA rules (see below).
+2. Flag portability risks (Windows-only features) and propose pure-VBA alternatives.
+3. When behavior changes are possible, request evidence (tests / local run notes).
 
-- When writing instructions for VBA code, consider the unique syntax and conventions of VBA.
-- Provide context about the purpose of the code and any specific requirements or constraints.
-- If applicable, include examples of expected input and output to clarify the desired behavior.
-- Be mindful of the limitations of Copilot when working with VBA, as it may not always generate code that is compatible with VBA's specific features and quirks.
-- Use `Option Explicit` in your VBA code to help catch undeclared variables and improve code quality, and mention this in the instructions if relevant.
-- Don't use `On Error Resume Next` in VBA code, as it can lead to unhandled errors and make debugging difficult. Instead, use structured error handling with `On Error GoTo` and mention this in the instructions if relevant.
-- Avoid using `Stop` statements in VBA code, as they can halt execution and make it difficult to debug. Instead, use proper error handling and logging, and mention this in the instructions if relevant.
-- Avoid using `Debug.Print` statements in VBA code, as they can clutter the output and make it difficult to read. Instead, use proper logging mechanisms and mention this in the instructions if relevant.
-- Do not include trailing whitespace in your VBA code, as it can lead to formatting issues and make the code harder to read. Ensure that each line ends with a single newline character (LF) and mention this in the instructions if relevant.
-- Do not use windows api calls in VBA code, as they can lead to compatibility issues and make the code less portable. Instead, use built-in VBA functions and features, and mention this in the instructions if relevant.
+## Repository VBA rules
+
+### Scope distinction
+- **Production code**: `vba-files/` excluding `vba-files/test/` (strict)
+- **Test code**: `vba-files/test/` (relaxed)
+
+### Production code rules (strict)
+- `Option Explicit` is required at the top of every module.
+- Do **not** use `On Error Resume Next`. Use structured error handling (`On Error GoTo ...`) and do not silently ignore errors.
+- Do **not** use `Stop` or `Debug.Print`.
+- No trailing whitespace. Files must end with a newline (LF).
+
+### Test code rules (relaxed)
+- Keep basic text hygiene: no trailing whitespace; file ends with a newline (LF).
+- `Debug.Print`, `Stop`, and `On Error Resume Next` may be acceptable in test modules.
+  Do not report them as production violations when changes are limited to `vba-files/test/`.
+
+## Portability rule (Excel for Mac compatibility)
+- **Windows API calls are prohibited.**
+  - Prohibited patterns include: `Declare` / `Declare PtrSafe`, any `Lib "..."` declarations
+    (e.g. `kernel32`, `user32`, `advapi32`), and Windows-only API wrappers.
+  - Prefer pure VBA and Excel built-in features instead.
+
+## Output style for reviews
+- Be specific: mention the **file path** and the **exact construct** (e.g. `On Error Resume Next`, `Declare PtrSafe ... Lib "kernel32"`).
+- Prefer small, safe fixes. Avoid large rewrites unless necessary.
+- If sorting correctness/stability could be affected (edge cases: empty input, duplicates, already-sorted, reverse-sorted, very large inputs),
+  request additional test coverage or local run notes.
