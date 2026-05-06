@@ -75,11 +75,6 @@ check_trailing_whitespace() {
     # Strip CR if present (CRLF files on Linux)
     line="${line%$'\r'}"
 
-    # Skip comment-only lines
-    if is_comment_line "$line"; then
-      continue
-    fi
-
     if [[ "$line" =~ [[:blank:]]$ ]]; then
       err "$file" "$lineno" "Trailing whitespace detected."
     fi
