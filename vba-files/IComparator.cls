@@ -7,8 +7,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Option Explicit
 
-'/ <summary>
+'/<summary>
 '/ Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.
 '/ </summary>
 '/ <param name="a">The first object to compare.</param>

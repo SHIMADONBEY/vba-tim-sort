@@ -12,6 +12,37 @@ Provide clear instructions for making changes, running local verification, and r
 - Close all running Excel instances before running tests.
 - Run commands from the repository root (the working directory affects test output paths).
 
+## VBA coding rules
+
+The following rules apply to all VBA source files under `vba-files/`.
+Production files (everything except `vba-files/test/`) are subject to stricter checks enforced by the **vba-lint** CI job.
+
+### Production code (`vba-files/` root — strict rules)
+
+| Rule | Detail |
+|---|---|
+| `Option Explicit` required | Every module must declare `Option Explicit` at the top. |
+| No `On Error Resume Next` | Use structured error handling (`On Error GoTo label`) instead. |
+| No `Stop` | Remove all `Stop` statements before merging. |
+| No `Debug.Print` | Remove all debug output before merging. |
+| No trailing whitespace | Lines must not end with spaces or tabs. |
+| File ends with a newline | Each file must end with a single newline character (LF). |
+
+### Test code (`vba-files/test/` — relaxed rules)
+
+Test modules are only checked for basic text hygiene (trailing whitespace, final newline).
+`Debug.Print`, `Stop`, and `On Error Resume Next` are permitted in test code.
+
+### What the CI checks automatically
+
+The **vba-lint** workflow (`.github/workflows/vba-lint.yml`) runs on every pull request that touches `vba-files/`.
+It runs `.github/scripts/lint-vba.sh` on an Ubuntu runner and produces file-and-line annotations directly in the PR.
+
+The following items are **not** checked by CI and require local Windows/Excel verification (see the `local-verified` label requirement):
+- Runtime correctness and sorting behaviour
+- Excel API compatibility
+- Test suite results (`test-result.json`)
+
 ## About making changes
 
 ### Changing VBA

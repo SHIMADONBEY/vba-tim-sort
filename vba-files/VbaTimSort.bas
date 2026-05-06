@@ -137,7 +137,7 @@ End Sub
 '/ <returns>A negative number if a < b, zero if a = b, and a positive number if a > b, adjusted for ascending or descending order.</returns>
 Private Function InternalCompare(a As Variant, b As Variant, comparator As IComparator, descending As Boolean) As Long
     Dim vCompared As Long
-    
+
     If (IsObject(a) Or IsObject(b)) Then
         If comparator Is Nothing Then
             Err.Raise vbObjectError + 7301, "VbaTimSort.InternalCompare", "Object comparison requires IComparator."
@@ -187,7 +187,7 @@ Private Function GetMinRunLength(ByVal ItemsCount As Long) As Long
         r = r Or (n And 1)
         n = n \ 2
     Loop
-    
+
     GetMinRunLength = n + r
 End Function
 
@@ -532,7 +532,7 @@ Private Sub MergeLow( _
     End If
 
     Dim vTemp() As Variant
-    ReDim vTemp(0 To len1 - 1) 
+    ReDim vTemp(0 To len1 - 1)
 
     Dim i As Long
     For i = 0 To len1 - 1
@@ -629,7 +629,7 @@ End Sub
 '/ <param name="runBase">An array storing the starting indices of runs. This array may be resized if it does not have enough capacity.</param>
 '/ <param name="runLen">An array storing the lengths of runs. This array may be resized if it does not have enough capacity. Must be resized in sync with runBase.</param>
 '/ <param name="requiredSize">
-'/ The required size of the run stack. Must be non-negative. 
+'/ The required size of the run stack. Must be non-negative.
 '/ If the current capacity of the stack is less than requiredSize, the stack will be resized to at least requiredSize.
 '/ </param>
 Private Sub EnsureStackCapacity( _
@@ -698,10 +698,11 @@ End Function
 '/ <param name="arr">The array to check. This should be a dynamic array variable that may or may not have been allocated.</param>
 '/ <returns>True if the array has been allocated and can be accessed without error, False if the array has not been allocated.</returns>
 Private Function HasArrayAllocated(arr As Variant) As Boolean
-    On Error Resume Next
+    On Error GoTo NotAllocated
     Dim vTemp As Long
     vTemp = LBound(arr)
-    HasArrayAllocated = (Err.Number = 0)
-    Err.Clear
-    On Error GoTo 0
+    HasArrayAllocated = True
+    Exit Function
+NotAllocated:
+    HasArrayAllocated = False
 End Function
