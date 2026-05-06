@@ -25,6 +25,7 @@
 | `On Error Resume Next` 禁止 | 構造化エラーハンドリング（`On Error GoTo ラベル`）を使用すること。 |
 | `Stop` 禁止 | マージ前に `Stop` 文を削除すること。 |
 | `Debug.Print` 禁止 | マージ前にデバッグ出力を削除すること。 |
+| Windows API 禁止 | Mac上のVBA で動かすことができるようにするため、Windows API の使用は禁止する。 (例: `Declare`、`Declare PtrSafe`、`Lib "kernel32"`、`Lib "user32"` など) Excel VBA 標準の機能のみで実装すること。 |
 | 行末スペース禁止 | 行末にスペースやタブを残さないこと。 |
 | ファイル末尾の改行 | 各ファイルは LF 改行で終わること。 |
 

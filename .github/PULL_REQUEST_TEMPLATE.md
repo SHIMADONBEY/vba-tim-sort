@@ -10,7 +10,7 @@
 ## Checklist (required before merge)
 
 ### Automated CI checks (handled by GitHub Actions)
-- [ ] **vba-lint** passed — `Option Explicit` present, no prohibited constructs (`On Error Resume Next` / `Stop` / `Debug.Print`), no trailing whitespace, files end with newline
+- [ ] **vba-lint** passed — `Option Explicit` present, no prohibited constructs (`On Error Resume Next` / `Stop` / `Debug.Print` / Windows API calls via `Declare`/`Lib`), no trailing whitespace, files end with newline
   - Applies strict rules to `vba-files/` (production) and relaxed rules to `vba-files/test/` (test)
 - [ ] **Require Local Verification** check passed (requires the `local-verified` label)
 
@@ -61,7 +61,7 @@
 ## マージ前チェック（必須）
 
 ### 自動CIチェック（GitHub Actionsが実行）
-- [ ] **vba-lint** が通っていること — `Option Explicit` の存在、禁止構文（`On Error Resume Next` / `Stop` / `Debug.Print`）なし、行末スペースなし、ファイル末尾改行あり
+- [ ] **vba-lint** が通っていること — `Option Explicit` の存在、禁止構文（`On Error Resume Next` / `Stop` / `Debug.Print` / `Declare`/`Lib` によるWindows APIの使用）なし、行末スペースなし、ファイル末尾改行あり
   - `vba-files/`（製品コード）には厳格ルール、`vba-files/test/`（テストコード）には緩和ルールを適用
 - [ ] **Require Local Verification** チェックが通っていること（`local-verified` ラベルが必要）
 
