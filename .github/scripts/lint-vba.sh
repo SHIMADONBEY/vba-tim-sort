@@ -44,13 +44,10 @@ is_comment_line() {
   if [[ "$line" =~ ^[[:space:]]*\' ]]; then
     return 0
   fi
-  # Case-insensitive "Rem"
-  shopt -s nocasematch
-  if [[ "$line" =~ ^[[:space:]]*rem([[:space:]]+|$) ]]; then
-    shopt -u nocasematch
+  # Case-insensitive "Rem" without changing global shell options
+  if [[ "$line" =~ ^[[:space:]]*[Rr][Ee][Mm]([[:space:]]+|$) ]]; then
     return 0
   fi
-  shopt -u nocasematch
   return 1
 }
 
