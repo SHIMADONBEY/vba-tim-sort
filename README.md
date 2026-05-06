@@ -132,6 +132,69 @@ Semantic Versioning (SemVer) is recommended; use tags like `v1.2.3`.
 
 Avoid long-lived branches; merge early and often to minimize conflicts.
 
+#### Distribution and Release Guidelines
+
+This project follows a controlled release process to ensure release artifacts contain only production code and the required license/notice files, and to prevent inclusion of development-only framework sources (archived in the `archive` branch).
+
+What to include in release artifacts
+- vba-files/VbaTimSort.bas
+- vba-files/IComparator.cls
+- README (short usage/instructions)
+- LICENSE
+- THIRD_PARTY_NOTICES.md
+- examples/ or sample files (if present)
+Do NOT include:
+- xvba_modules/ or any code that lives only on the `archive` branch (for example: XDebug or other development-only tools).
+- test-only modules under vba-files/test
+
+Why xvba_modules must not be included
+- xvba_modules and related tools are development-environment specific and intentionally archived in the `archive` branch. They must not be redistributed or mixed into `develop`/`main` release artifacts.
+
+Preparing a release (recommended flow)
+1. Start from a verified `develop`:
+   - git fetch origin
+   - git checkout develop
+   - git pull origin develop
+   - Confirm HEAD commit: `git rev-parse --short HEAD`
+
+2. Create a release branch based on develop (example):
+   - git checkout -b release/v0.1.0
+   - Update CHANGELOG or version notes if needed
+   - Commit changes and push:
+     - git push -u origin release/v0.1.0
+
+3. Create the release archive locally to verify content (git archive respects .gitattributes export-ignore):
+   - # create test archive from the current branch
+     git archive --format=zip --worktree-attributes --output=release-test.zip HEAD
+   - # inspect archive content and ensure no archive-only files are present
+     unzip -l release-test.zip
+     # verify xvba_modules not included:
+     unzip -l release-test.zip | grep -E '^ *[0-9]+' | awk '{print $4}' | grep -E '^xvba_modules/' || echo "OK: xvba_modules not found"
+
+4. Create final archive and compute checksum:
+   - git archive --format=zip --worktree-attributes --output=vba-tim-sort-vX.Y.Z.zip HEAD
+   - sha256sum vba-tim-sort-vX.Y.Z.zip > vba-tim-sort-vX.Y.Z.zip.sha256
+
+5. Publish the release
+   - Option A (recommended): push `release/vX.Y.Z` and open a PR into `main`. After review and merge (squash merge per project policy), use the repository's release workflow (main push) to publish artifacts.
+   - Option B: tag the release and create a GitHub Release; attach the zip and .sha256 file.
+
+Checklist before releasing
+- [ ] The archive contains only intended production files (no xvba_modules or files from `archive` branch).
+- [ ] LICENSE and THIRD_PARTY_NOTICES.md are included in the artifact.
+- [ ] README/usage instructions are up-to-date.
+- [ ] CHANGELOG/version information is updated.
+- [ ] SHA256 checksum for the artifact is computed and attached to the release or PR.
+- [ ] Local verification (if required) completed and `local-verified` label added to the release PR.
+
+Automation notes
+- The repository contains a release workflow (.github/workflows/release.yml) that runs on pushes to `main` and uses `git archive --worktree-attributes`. Ensure `.gitattributes` correctly marks archive-only files (e.g. `xvba_modules/** export-ignore`) so `git archive` excludes them.
+- Consider adding a pre-merge CI check to detect accidental inclusion of `xvba_modules/` in PRs targeting `develop` or `main`. (This is optional and can be added later as an automated safeguard.)
+
+Policies recap
+- `archive` branch: holds development-only framework code (xvba_modules, XDebug, etc.). Do not merge or include into `develop` or `main`.
+- Merge policy: use squash merges for feature/release branches; merges from `archive` into `main` or `develop` are disallowed.
+
 #### Notes
 
 This library is developed using the XVBA framework.
