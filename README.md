@@ -176,8 +176,7 @@ Preparing a release (recommended flow)
    - sha256sum vba-tim-sort-vX.Y.Z.zip > vba-tim-sort-vX.Y.Z.zip.sha256
 
 5. Publish the release
-   - Option A (recommended): push `release/vX.Y.Z` and open a PR into `main`. After review and merge (squash merge per project policy), use the repository's release workflow (main push) to publish artifacts.
-   - Option B: tag the release and create a GitHub Release; attach the zip and .sha256 file.
+   - From `release/v1.0.0`, open a Pull Request into `main`. After review, merge the PR according to team policy: either “Squash and merge” (recommended) or “Create a merge commit”. After merging, create a release tag (for example `v1.0.0`) and publish the release artifacts (the repository’s release workflow will publish artifacts on main pushes if configured).
 
 Checklist before releasing
 - [ ] The archive contains only intended production files (no xvba_modules or files from `archive` branch).
