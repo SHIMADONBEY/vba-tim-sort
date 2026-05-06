@@ -99,7 +99,7 @@ sortedWithComp = SortArrayInPlace(arr, comp)
 - PR には以下を添付してください：
   - ローカル実行ログ（テキスト） — 実行した手順と結果（成功/失敗・エラー出力）  
   - 使用した `test-runner.xlsb` の SHA256 ハッシュ（下記コマンド参照）
-- `test-runner.xlsb` の直接更新はメンテナの承認が必要です。バイナリ更新が必要な場合は PR でその理由を明記してください。
+- `test-runner.xlsb` の直接更新はリポジトリ所有者([@Shimadonbey](https://github.com/SHIMADONBEY))の承認が必要です。バイナリ更新が必要な場合は PR でその理由を明記してください。
 - 詳しいローカル検証手順や LFS の使い方は [CONTRIBUTING](CONTRIBUTING.ja.md) を参照してください。
 
 ハッシュ確認コマンド（例）

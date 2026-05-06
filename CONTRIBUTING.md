@@ -73,7 +73,7 @@ git fetch --all        # fetch LFS pointers
 git lfs pull           # download LFS objects for the current checkout
 ```
 
-- Direct updates to the binary require approval from the repository owner (@Shimadonbey). If an update is necessary, include the update reason and local verification logs in the PR.
+- Direct updates to the binary require approval from the repository owner ([@Shimadonbey](https://github.com/SHIMADONBEY)). If an update is necessary, include the update reason and local verification logs in the PR.
 - Official builds are also distributed via GitHub Releases.
 
 #### Hash check examples

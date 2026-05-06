@@ -83,7 +83,7 @@ git fetch --all        # fetch LFS pointers
 git lfs pull           # download LFS objects for the current checkout
 ```
 
-ファイルの直接更新はリポジトリ所有者（@Shimadonbey）の承認が必要です。
+ファイルの直接更新はリポジトリ所有者([@Shimadonbey](https://github.com/SHIMADONBEY))の承認が必要です。
 更新が必要な場合は、PRに更新理由とローカル検証ログを添えてください。
 
 公式ビルドはGitHub Releases にも配布します。
