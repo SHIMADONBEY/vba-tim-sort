@@ -100,7 +100,7 @@ End Function
 
 ' -- Test cases -----------------------------------------------
 
-' --- 1. Empty array / Single element ---
+' --- 1. Empty array / Single element / Multiple dimensions element ---
 
 Private Sub Test_EmptyArray()
     Dim arr() As Variant
@@ -118,6 +118,19 @@ Private Sub Test_SingleElement()
     result = VbaTimSort.SortArrayInPlace(arr, Nothing)
     Dim passed As Boolean: passed = (result(0) = 42)
     RecordResult "Sort_SingleElement", passed, IIf(passed, "", "Expected [42], got " & ArrayToString(result))
+End Sub
+
+Private Sub Test_MultiDimensionalElement()
+    Dim raised As Boolean: raised = False
+    Dim arr(0 To 1) As Variant
+    arr(0) = Array(2, 1)
+    arr(1) = Array(1, 2)
+    Dim result As Variant
+    On Error Resume Next
+    result = VbaTimSort.SortArrayInPlace(arr, Nothing)
+    If Err.Number = vbObjectError + 7402 Then raised = True
+    On Error GoTo 0
+    RecordResult "Sort_MultiDimensionalElement_Raises7402", raised, IIf(raised, "", "Expected error 7402 but got " & Err.Number)
 End Sub
 
 ' --- 2. Number Arrays (Long / Double) ---
@@ -408,6 +421,7 @@ Public Sub RunAll()
     ' Empty / Small size
     Test_EmptyArray
     Test_SingleElement
+    Test_MultiDimensionalElement
 
     ' Number arrays
     Test_Numbers_Ascending
@@ -474,6 +488,7 @@ Public Function RunAll_Headless(ByVal outPath As String) As Boolean
     ' Run same tests as RunAll (call the same helpers)
     Test_EmptyArray
     Test_SingleElement
+    Test_MultiDimensionalElement
     Test_Numbers_Ascending
     Test_Numbers_Descending
     Test_Numbers_WithNegatives
