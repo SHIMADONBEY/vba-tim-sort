@@ -235,3 +235,9 @@ Response times and release schedules are not guaranteed.
 ### Acknowledgements
 
 Thanks to everyone who reports issues, improves documentation, and contributes code.
+
+## CHANGELOG
+
+|Date|Version|Description|
+|--:|---|---|
+|2026/05/06|`v1.0.0`|First Release.|
