@@ -12,7 +12,7 @@ Excelの並べ替え機能を使わずに、マクロの中でライブラリに
    - VBA エディタを開き、メニューの「ファイル」→「ファイルのインポート」で次のファイルをプロジェクトに追加します。  
      - [vba-files/VbaTimSort.bas](vba-files/VbaTimSort.bas#L1)  
      - [vba-files/IComparator.cls](vba-files/IComparator.cls#L1)  
-   - `IComparator` の実装サンプルは `vba-files/test/comparators/` にあります。必要に応じてプロジェクトに追加してください。
+   - `IComparator` の実装サンプルは `vba-files/test/comparators/` にあります。GitHub リポジトリ上では参照できますが、`vba-files/test/**` は `export-ignore` のため `git archive` ベースのリリース ZIP には含まれません。必要な場合はリポジトリから取得してプロジェクトに追加してください。
 
 2. 使い方 （配列）
 
