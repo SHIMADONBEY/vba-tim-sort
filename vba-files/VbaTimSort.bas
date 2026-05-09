@@ -7,28 +7,39 @@ Option Explicit
 ' Error codes for VbaTimSort.
 ' All error codes are based on vbObjectError to avoid conflicts with built-in VBA error codes.
 '</summary>
-Public Const TIMSORT_ERR_BASE                = vbObjectError
+Public Const TIMSORT_ERR_BASE                               = vbObjectError
+
+' General errors (ERR)
+Public Const TIMSORT_ERR_GENERAL                            = TIMSORT_ERR_BASE + 8192
 
 ' Argument-related errors (ARG)
-
-Public Const TIMSORT_ERR_ARG_NOT_ARRAY                     = vbObjectError + 7404
-Public Const TIMSORT_ERR_ARG_NOT_ONE_DIMENSIONAL_ARRAY     = vbObjectError + 7408
-Public Const TIMSORT_ERR_ARG_INVALID_ITEMSCOUNT            = vbObjectError + 7401
-Public Const TIMSORT_ERR_ARG_INVALID_RANGE                 = vbObjectError + 7403
-Public Const TIMSORT_ERR_ARG_OUT_OF_BOUNDS                 = vbObjectError + 7405
-Public Const TIMSORT_ERR_ARG_INVALID_START                 = vbObjectError + 7406
-Public Const TIMSORT_ERR_ARG_LENGTH_NOT_POSITIVE           = vbObjectError + 7407
-Public Const TIMSORT_ERR_ARG_INDEX_OUT_OF_RANGE            = vbObjectError + 7409
-Public Const TIMSORT_ERR_ARG_RUN_LENGTHS_POSITIVE          = vbObjectError + 7410
-Public Const TIMSORT_ERR_ARG_RUN_BASE_CONSISTENCY          = vbObjectError + 7411
-Public Const TIMSORT_ERR_ARG_UNSUPPORTED_TYPE              = vbObjectError + 7302
-Public Const TIMSORT_ERR_ARG_NO_COMPARATOR_FOR_OBJECTS     = vbObjectError + 7301
-Public Const TIMSORT_ERR_ARG_COLLECTION_NOTHING            = vbObjectError + 7402
+Public Const TIMSORT_ERR_ARG_NOT_ARRAY                      = TIMSORT_ERR_GENERAL + 1
+Public Const TIMSORT_ERR_ARG_NOT_ONE_DIMENSIONAL_ARRAY      = TIMSORT_ERR_GENERAL + 2
+Public Const TIMSORT_ERR_ARG_COLLECTION_NOTHING             = TIMSORT_ERR_GENERAL + 3
+Public Const TIMSORT_ERR_ARG_INVALID_ITEMSCOUNT             = TIMSORT_ERR_GENERAL + 4
+Public Const TIMSORT_ERR_ARG_INVALID_RANGE                  = TIMSORT_ERR_GENERAL + 5
+Public Const TIMSORT_ERR_ARG_OUT_OF_BOUNDS                  = TIMSORT_ERR_GENERAL + 6
+Public Const TIMSORT_ERR_ARG_INVALID_START                  = TIMSORT_ERR_GENERAL + 7
+Public Const TIMSORT_ERR_ARG_LENGTH_NOT_POSITIVE            = TIMSORT_ERR_GENERAL + 8
+Public Const TIMSORT_ERR_ARG_INDEX_OUT_OF_RANGE             = TIMSORT_ERR_GENERAL + 9
+Public Const TIMSORT_ERR_ARG_RUN_LENGTHS_POSITIVE           = TIMSORT_ERR_GENERAL + 10
+Public Const TIMSORT_ERR_ARG_RUN_BASE_CONSISTENCY           = TIMSORT_ERR_GENERAL + 11
+Public Const TIMSORT_ERR_ARG_UNSUPPORTED_TYPE               = TIMSORT_ERR_GENERAL + 12
+Public Const TIMSORT_ERR_ARG_NO_COMPARATOR_FOR_OBJECTS      = TIMSORT_ERR_GENERAL + 13
 
 ' State/stack inconsistency errors (STATE)
-Public Const TIMSORT_ERR_STATE_REQUIRED_SIZE_NEGATIVE      = vbObjectError + 7412   ' requiredSize < 0
-Public Const TIMSORT_ERR_STATE_RUN_STACK_MISMATCH          = vbObjectError + 7413   ' runBase/runLen init mismatch
-Public Const TIMSORT_ERR_STATE_STACK_SIZE_NEGATIVE         = vbObjectError + 7414   ' stackSize < 0
+Public Const TIMSORT_ERR_STATE_REQUIRED_SIZE_NEGATIVE       = TIMSORT_ERR_GENERAL + 65   ' requiredSize < 0
+Public Const TIMSORT_ERR_STATE_RUN_STACK_MISMATCH           = TIMSORT_ERR_GENERAL + 66   ' runBase/runLen init mismatch
+Public Const TIMSORT_ERR_STATE_STACK_SIZE_NEGATIVE          = TIMSORT_ERR_GENERAL + 67   ' stackSize < 0
+
+' <summary>
+' Maximum run length for TimSort.
+' The actual run length can vary, but this constant defines an upper bound for the length of individual runs.
+' If a run exceeds this length, it will be sorted using binary insertion sort to ensure that it is efficiently sorted before being merged with other runs.
+' Setting this value too high can lead to inefficient sorting of long runs, while setting it too low can lead to too many runs and excessive merging.
+' 64 is a commonly used value that provides a good balance for many sorting tasks.
+'</summary>
+Private Const MAX_RUN_LENGTH As Long = 64
 
 ' <summary> Initial size of the run stack. The run stack will grow dynamically if needed, but this is the initial allocation size. The maximum stack size is determined by the maximum number of runs that can be created, which is related to the size of the input array and the minimum run length. In practice, this initial size should be sufficient for most sorting tasks, but it can be increased if you expect to sort very large arrays with many runs.</summary>
 Private Const INITIAL_RUN_STACK_SIZE As Long = 16
@@ -213,21 +224,22 @@ Private Function InternalCompare(a As Variant, b As Variant, comparator As IComp
 End Function
 
 '/ <summary>
-'/ Calculates the minimum run length for a given number of items. This is used to determine how to break the array into runs for the TimSort algorithm.
+'/ Calculates the minimum run length for a given number of items.
+'/ This is used to determine how to break the array into runs for the TimSort algorithm.
 '/ </summary>
 '/ <param name="ItemsCount">The total number of items to be sorted. Must be a positive integer.</param>
 '/ <returns>The minimum run length to be used in the TimSort algorithm.</returns>
 Private Function GetMinRunLength(ByVal ItemsCount As Long) As Long
     If ItemsCount <= 0 Then
         Err.Raise VbaTimSort.TIMSORT_ERR_ARG_LENGTH_NOT_POSITIVE, "VbaTimSort.GetMinRunLength", "ItemsCount must be positive."
-    ElseIf ItemsCount < 64 Then
+    ElseIf ItemsCount < MAX_RUN_LENGTH Then
         GetMinRunLength = ItemsCount
         Exit Function
     End If
 
     Dim n As Long: n = ItemsCount
     Dim r As Long: r = 0
-    Do While n >= 64
+    Do While n >= MAX_RUN_LENGTH
         r = r Or (n And 1)
         n = n \ 2
     Loop
