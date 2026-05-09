@@ -122,15 +122,28 @@ End Sub
 
 Private Sub Test_MultiDimensionalElement()
     Dim raised As Boolean: raised = False
-    Dim arr(0 To 1) As Variant
-    arr(0) = Array(2, 1)
-    arr(1) = Array(1, 2)
+    Dim arr(0 To 1, 0 To 1) As Variant
+    arr(0, 0) = 2: arr(0, 1) = 1
+    arr(1, 0) = 1: arr(1, 1) = 2
     Dim result As Variant
     On Error Resume Next
     result = VbaTimSort.SortArrayInPlace(arr, Nothing)
     If Err.Number = vbObjectError + 7408 Then raised = True
     On Error GoTo 0
     RecordResult "Sort_MultiDimensionalElement_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & Err.Number)
+End Sub
+
+Private Sub Test_JaggedArray()
+    Dim raised As Boolean: raised = False
+    Dim arr(0 To 1) As Variant
+    arr(0) = Array(3, 2, 1)
+    arr(1) = Array(1, 2)
+    Dim result As Variant
+    On Error Resume Next
+    result = VbaTimSort.SortArrayInPlace(arr, Nothing)
+    If Err.Number = vbObjectError + 7408 Then raised = True
+    On Error GoTo 0
+    RecordResult "Sort_JaggedArray_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & Err.Number)
 End Sub
 
 ' --- 2. Number Arrays (Long / Double) ---
@@ -422,6 +435,7 @@ Public Sub RunAll()
     Test_EmptyArray
     Test_SingleElement
     Test_MultiDimensionalElement
+    Test_JaggedArray
 
     ' Number arrays
     Test_Numbers_Ascending
@@ -489,6 +503,7 @@ Public Function RunAll_Headless(ByVal outPath As String) As Boolean
     Test_EmptyArray
     Test_SingleElement
     Test_MultiDimensionalElement
+    Test_JaggedArray
     Test_Numbers_Ascending
     Test_Numbers_Descending
     Test_Numbers_WithNegatives
