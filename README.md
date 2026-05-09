@@ -10,7 +10,7 @@ English | [日本語](README.ja.md)
    - Open the VBA Editor, go to “File” → “Import File” in the menu, and add the following files to your project:  
      - [vba-files/VbaTimSort.bas](vba-files/VbaTimSort.bas#L1)  
      - [vba-files/IComparator.cls](vba-files/IComparator.cls#L1)  
-   - Sample implementations of `IComparator` are located in `vba-files/test/comparators/`. Add them to your project as needed.
+   - Sample implementations of `IComparator` are located in [`vba-files/test/comparators` on GitHub repository](https://github.com/SHIMADONBEY/vba-tim-sort/tree/main/vba-files/test/comparators).
 
 2. Usage (Arrays)
 
@@ -143,7 +143,6 @@ What to include in release artifacts
 - README (short usage/instructions)
 - LICENSE
 - THIRD_PARTY_NOTICES.md
-- examples/ or sample files (if present)
 
 Do NOT include:
 - vba-files/test/ — test-only modules are for development/verification only and must not be shipped to end users.

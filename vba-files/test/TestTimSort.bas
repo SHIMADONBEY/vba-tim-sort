@@ -5,14 +5,10 @@ Attribute VB_Name = "TestTimSort"
 '/
 '/ NOTE:
 '/   This module is for verification only.
-'/   Because config.json sets vba_folder to "vba-files", this file is also within the XVBA sync target.
-'/   Do not include this module in release workbooks or package outputs.
 '/
 '/ How to use:
-'/   1. Open the VBA editor (Alt+F11) and add this module to your project.
-'/   2. Open the Immediate Window (Ctrl+G) and run:
-'/         TestTimSort.RunAll
-'/      Or assign RunAll to a button on the TestRunner sheet.
+'/   1. Open the VBA editor (ALT+F11) and insert this module into the same workbook as VbaTimSort.
+'/   2. Run the RunAll sub to execute all tests and write results to the "Results" sheet.
 '/ ============================================================
 'namespace=vba-files/test
 Option Explicit
