@@ -33,10 +33,10 @@ Public Const TIMSORT_ERR_STATE_RUN_STACK_MISMATCH           = TIMSORT_ERR_GENERA
 Public Const TIMSORT_ERR_STATE_STACK_SIZE_NEGATIVE          = TIMSORT_ERR_GENERAL + 67   ' stackSize < 0
 
 ' <summary>
-' Maximum run length for TimSort.
-' The actual run length can vary, but this constant defines an upper bound for the length of individual runs.
-' If a run exceeds this length, it will be sorted using binary insertion sort to ensure that it is efficiently sorted before being merged with other runs.
-' Setting this value too high can lead to inefficient sorting of long runs, while setting it too low can lead to too many runs and excessive merging.
+' Upper bound used when computing TimSort's minimum run length.
+' The minimum run length returned by GetMinRunLength is derived from the input size and this threshold.
+' Runs shorter than the computed minimum may be extended and sorted using binary insertion sort before merging.
+' Setting this value too high can lead to larger minimum runs, while setting it too low can lead to too many runs and excessive merging.
 ' 64 is a commonly used value that provides a good balance for many sorting tasks.
 '</summary>
 Private Const MAX_RUN_LENGTH As Long = 64
