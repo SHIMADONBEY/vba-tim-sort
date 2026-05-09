@@ -6,7 +6,7 @@ Option Explicit
 '/ <summary>
 ' Error codes for VbaTimSort.
 ' All error codes are based on vbObjectError to avoid conflicts with built-in VBA error codes.
-'</summary>
+'/ </summary>
 Public Const TIMSORT_ERR_BASE                               = vbObjectError
 
 ' General errors (ERR)
