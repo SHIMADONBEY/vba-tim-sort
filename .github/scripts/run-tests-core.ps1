@@ -137,27 +137,22 @@ try {
 
     Write-Host ("Test run completed. Passed: {0}" -f $passed)
 
-    if ($null -ne $json) {
-      # Log the test result and the decision made based on the JSON content.
-      # This is useful for debugging and tracing the test outcomes, especially when multiple runs are involved.
-      $time = (Get-Date).ToString("o")
+    # JSON content is considered the authoritative source for the test result, but the script will log the decision and keep the VBA-authored result file as is, regardless of the JSON content.
+    # This allows for post-run analysis and debugging based on the VBA output while still using the JSON for determining pass/fail status.
+    # Log the test result and the decision made based on the JSON content.
+    # This is useful for debugging and tracing the test outcomes, especially when multiple runs are involved.
+    $time = (Get-Date).ToString("o")
 
-      if ($passed) {
-        $logMessage = "$time Test passed; JSON indicates success. Keeping VBA-authored result file as authoritative: $RunOutPath"
-        $global:__ResultExitCode = 0
-      } else {
-        $logMessage = "$time Test failed; JSON indicates failure. Keeping VBA-authored result file as authoritative: $RunOutPath"
-        $global:__ResultExitCode = 2
-      }
-
-      Out-File -FilePath .\test-result.write-debug.log -Append -Encoding utf8 -InputObject $logMessage
-      $global:__ResultWritten = $true
-      Exit $global:__ResultExitCode
+    if ($passed) {
+      $logMessage = "$time Test passed; JSON indicates success. Keeping VBA-authored result file as authoritative: $RunOutPath"
+      $global:__ResultExitCode = 0
+    } else {
+      $logMessage = "$time Test failed; JSON indicates failure. Keeping VBA-authored result file as authoritative: $RunOutPath"
+      $global:__ResultExitCode = 2
     }
 
-    # If we reach this point, it means the JSON was not valid or did not contain the expected 'passed' property.
-    # We will treat this as a failure but still keep the VBA-authored result file for debugging.
-    Write-ResultAndExit @{ error = "invalid_json"; message = "JSON does not contain expected 'passed' property"; timestamp = (Get-Date).ToString("o") } 7
+    Out-File -FilePath .\test-result.write-debug.log -Append -Encoding utf8 -InputObject $logMessage
+    $global:__ResultWritten = $true
     Exit $global:__ResultExitCode
   } finally {
     # COM cleanup (this runs even after Write-ResultAndExit)
