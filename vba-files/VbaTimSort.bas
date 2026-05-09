@@ -5,18 +5,18 @@ Option Explicit
 
 Private Const INITIAL_RUN_STACK_SIZE As Long = 16
 
-'/ <summary>
-'/ Sorts a one-dimensional array using the TimSort algorithm.
-'/ The original array is not modified; a new sorted array is returned.
-'/ </summary>
-'/ <param name="arr">The array to be sorted. Must be a one-dimensional array.</param>
-'/ <param name="comparator">
-'/ An optional IComparator implementation for custom object comparison.
-'/ This is required if the array contains objects that do not have a natural ordering or if you want to sort in a custom order.
-'/ If not provided, natural ordering is used for supported data types.
-'/ </param>
-'/ <param name="descending">If True, sorts in descending order. Default is False (ascending order).</param>
-'/ <returns>The sorted array. The original array is not modified in place.</returns>
+' / <summary>
+' / Sorts a one-dimensional array using the TimSort algorithm.
+' / The original array is not modified; a new sorted array is returned.
+' / </summary>
+' / <param name="arr">The array to be sorted. Must be a one-dimensional array.</param>
+' / <param name="comparator">
+' / An optional IComparator implementation for custom object comparison.
+' / This is required if the array contains objects that do not have a natural ordering or if you want to sort in a custom order.
+' / If not provided, natural ordering is used for supported data types.
+' / </param>
+' / <param name="descending">If True, sorts in descending order. Default is False (ascending order).</param>
+' / <returns>The sorted array. The original array is not modified in place.</returns>
 Public Function SortArray(ByRef arr As Variant, Optional ByVal comparator As IComparator = Nothing, Optional descending As Boolean = False) As Variant
     Dim vNewArray As Variant
     If Not IsArray(arr) Then
