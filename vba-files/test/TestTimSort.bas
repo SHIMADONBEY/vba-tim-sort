@@ -126,9 +126,9 @@ Private Sub Test_MultiDimensionalElement()
     Err.Clear
     result = VbaTimSort.SortArray(arr)
     Dim errorNumber As Long: errorNumber = Err.Number
-    If errorNumber = VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE Then raised = True
+    If errorNumber = VbaTimSort.TIMSORT_ERR_ARG_NOT_ONE_DIMENSIONAL_ARRAY Then raised = True
     On Error GoTo 0
-    RecordResult "Sort_MultiDimensionalElement_Error", raised, IIf(raised, "", "Expected error " & VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE & " but got " & errorNumber)
+    RecordResult "Sort_MultiDimensionalElement_Error", raised, IIf(raised, "", "Expected error " & VbaTimSort.TIMSORT_ERR_ARG_NOT_ONE_DIMENSIONAL_ARRAY & " but got " & errorNumber)
 End Sub
 
 Private Sub Test_JaggedArray()
@@ -141,9 +141,9 @@ Private Sub Test_JaggedArray()
     Err.Clear
     result = VbaTimSort.SortArray(arr)
     Dim errorNumber As Long: errorNumber = Err.Number
-    If errorNumber = VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE Then raised = True
+    If errorNumber = VbaTimSort.TIMSORT_ERR_ARG_NOT_ONE_DIMENSIONAL_ARRAY Then raised = True
     On Error GoTo 0
-    RecordResult "Sort_JaggedArray_Error", raised, IIf(raised, "", "Expected error " & VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE & " but got " & errorNumber)
+    RecordResult "Sort_JaggedArray_Error", raised, IIf(raised, "", "Expected error " & VbaTimSort.TIMSORT_ERR_ARG_NOT_ONE_DIMENSIONAL_ARRAY & " but got " & errorNumber)
 End Sub
 
 ' --- 2. Number Arrays (Long / Double) ---
@@ -371,9 +371,9 @@ Private Sub Test_SortCollection_Nothing()
     Dim sortedColl As Collection
     Set sortedColl = VbaTimSort.SortCollection(Nothing)
     Dim errorNumber As Long: errorNumber = Err.Number
-    If errorNumber = VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE Then raised = True
+    If errorNumber = VbaTimSort.TIMSORT_ERR_ARG_COLLECTION_NOTHING Then raised = True
     On Error GoTo 0
-    RecordResult "SortCollection_Nothing_Error", raised, IIf(raised, "", "Expected error " & VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE & " but got " & errorNumber)
+    RecordResult "SortCollection_Nothing_Error", raised, IIf(raised, "", "Expected error " & VbaTimSort.TIMSORT_ERR_ARG_COLLECTION_NOTHING & " but got " & errorNumber)
 End Sub
 
 ' --- 10. Error handling ---
