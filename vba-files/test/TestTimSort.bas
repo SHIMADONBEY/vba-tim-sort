@@ -128,9 +128,9 @@ Private Sub Test_MultiDimensionalElement()
     Dim result As Variant
     On Error Resume Next
     result = VbaTimSort.SortArrayInPlace(arr, Nothing)
-    If Err.Number = vbObjectError + 7402 Then raised = True
+    If Err.Number = vbObjectError + 7408 Then raised = True
     On Error GoTo 0
-    RecordResult "Sort_MultiDimensionalElement_Raises7402", raised, IIf(raised, "", "Expected error 7402 but got " & Err.Number)
+    RecordResult "Sort_MultiDimensionalElement_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & Err.Number)
 End Sub
 
 ' --- 2. Number Arrays (Long / Double) ---

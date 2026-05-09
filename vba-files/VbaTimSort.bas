@@ -24,6 +24,8 @@ Public Function SortArrayInPlace(ByRef arr As Variant, ByVal comparator As IComp
         ReDim vNewArray(-1 To -1)
         SortArrayInPlace = vNewArray
         Exit Function
+    ElseIf IsMultiDimensionalArray(arr) Then
+        Err.Raise vbObjectError + 7408, "VbaTimSort.SortArrayInPlace", "Input array must be one-dimensional."
     End If
 
     Dim vUb As Long: vUb = UBound(arr)
@@ -32,6 +34,12 @@ Public Function SortArrayInPlace(ByRef arr As Variant, ByVal comparator As IComp
     ReDim vNewArray(0 To vUb - vLb)
     Dim i As Long
     For i = vLb To vUb
+        If IsArray(arr(i)) Then
+            ' TimSort is not designed to sort arrays that contain other arrays as elements.
+            ' This is a limitation of this implementation, and we will raise an error if we encounter this case.
+            Err.Raise vbObjectError + 7408, "VbaTimSort.SortArrayInPlace", "Input array must be one-dimensional and cannot contain arrays as elements."
+        End If
+
         AssignVariant vNewArray(i - vLb), arr(i)
     Next i
 
@@ -690,6 +698,21 @@ Private Function IsEmptyArray(ByRef arr As Variant) As Boolean
     Dim vLb As Long: vLb = LBound(arr)
     Dim vUb As Long: vUb = UBound(arr)
     IsEmptyArray = (vUb < vLb) Or (vLb = -1 And vUb = -1)
+End Function
+
+' /<summary>
+' Checks whether an array is a multi-dimensional array. This is used to ensure that the sorting functions only operate on one-dimensional arrays, as multi-dimensional arrays are not supported.
+' /</summary>
+' /<param name="arr">The array to check. This should be a Variant variable that may or may not contain an array.</param>
+' /<returns>True if the array is a multi-dimensional array, False if it is a one-dimensional array or not an array at all.</returns>
+Private Function IsMultiDimensionalArray(ByRef arr As Variant) As Boolean
+    On Error GoTo NotMultiDim
+    Dim vTemp As Long
+    vTemp = LBound(arr, 2)
+    IsMultiDimensionalArray = True
+    Exit Function
+NotMultiDim:
+    IsMultiDimensionalArray = False
 End Function
 
 '/ <summary>
