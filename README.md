@@ -10,7 +10,7 @@ English | [日本語](README.ja.md)
    - Open the VBA Editor, go to “File” → “Import File” in the menu, and add the following files to your project:  
      - [vba-files/VbaTimSort.bas](vba-files/VbaTimSort.bas#L1)  
      - [vba-files/IComparator.cls](vba-files/IComparator.cls#L1)  
-   - Sample implementations of `IComparator` are located in `vba-files/test/comparators/`. Add them to your project as needed.
+   - Sample implementations of `IComparator` are located in [`vba-files/test/comparators` on GitHub repository](https://github.com/SHIMADONBEY/vba-tim-sort/tree/main/vba-files/test/comparators).
 
 2. Usage (Arrays)
 
@@ -20,11 +20,11 @@ arr = Array(5, 2, 9, 1)
 
 ' To sort in natural order (numbers, strings, dates), pass `Nothing` to the comparator.
 Dim sorted As Variant
-sorted = SortArrayInPlace(arr, Nothing)             ' Ascending
+sorted = SortArray(arr, Nothing)             ' Ascending
 
 ' To sort in descending order, pass True as the optional third argument.
 Dim sortedDesc As Variant
-sortedDesc = SortArrayInPlace(arr, Nothing, True)   ' Descending
+sortedDesc = SortArray(arr, Nothing, True)   ' Descending
 ```
 
 3. Usage （Collection）
@@ -60,12 +60,12 @@ End Function
 Dim comp As IComparator
 Set comp = New MyComparator
 Dim sortedWithComp As Variant
-sortedWithComp = SortArrayInPlace(arr, comp)
+sortedWithComp = SortArray(arr, comp)
 ```
 
 5. Notes
 
-- `SortArrayInPlace()` / `SortCollection()` does not modify the original array or collection; instead, it returns a new array or collection.
+- `SortArray()` / `SortCollection()` does not modify the original array or collection; instead, it returns a new array or collection.
 - When comparing objects, you must provide an `IComparator`. (Failure to do so will result in an error.)
 
 ## Open Source Project Guidelines
@@ -143,7 +143,6 @@ What to include in release artifacts
 - README (short usage/instructions)
 - LICENSE
 - THIRD_PARTY_NOTICES.md
-- examples/ or sample files (if present)
 
 Do NOT include:
 - vba-files/test/ — test-only modules are for development/verification only and must not be shipped to end users.
