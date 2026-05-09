@@ -7,30 +7,30 @@ Option Explicit
 ' Error codes for VbaTimSort.
 ' All error codes are based on vbObjectError to avoid conflicts with built-in VBA error codes.
 '/ </summary>
-Public Const TIMSORT_ERR_BASE                               = vbObjectError
+Public Const TIMSORT_ERR_BASE As Long                               = vbObjectError
 
 ' General errors (ERR)
-Public Const TIMSORT_ERR_GENERAL                            = TIMSORT_ERR_BASE + 8192
+Public Const TIMSORT_ERR_GENERAL As Long                            = TIMSORT_ERR_BASE + 8192
 
 ' Argument-related errors (ARG)
-Public Const TIMSORT_ERR_ARG_NOT_ARRAY                      = TIMSORT_ERR_GENERAL + 1
-Public Const TIMSORT_ERR_ARG_NOT_ONE_DIMENSIONAL_ARRAY      = TIMSORT_ERR_GENERAL + 2
-Public Const TIMSORT_ERR_ARG_COLLECTION_NOTHING             = TIMSORT_ERR_GENERAL + 3
-Public Const TIMSORT_ERR_ARG_INVALID_ITEMSCOUNT             = TIMSORT_ERR_GENERAL + 4
-Public Const TIMSORT_ERR_ARG_INVALID_RANGE                  = TIMSORT_ERR_GENERAL + 5
-Public Const TIMSORT_ERR_ARG_OUT_OF_BOUNDS                  = TIMSORT_ERR_GENERAL + 6
-Public Const TIMSORT_ERR_ARG_INVALID_START                  = TIMSORT_ERR_GENERAL + 7
-Public Const TIMSORT_ERR_ARG_LENGTH_NOT_POSITIVE            = TIMSORT_ERR_GENERAL + 8
-Public Const TIMSORT_ERR_ARG_INDEX_OUT_OF_RANGE             = TIMSORT_ERR_GENERAL + 9
-Public Const TIMSORT_ERR_ARG_RUN_LENGTHS_POSITIVE           = TIMSORT_ERR_GENERAL + 10
-Public Const TIMSORT_ERR_ARG_RUN_BASE_CONSISTENCY           = TIMSORT_ERR_GENERAL + 11
-Public Const TIMSORT_ERR_ARG_UNSUPPORTED_TYPE               = TIMSORT_ERR_GENERAL + 12
-Public Const TIMSORT_ERR_ARG_NO_COMPARATOR_FOR_OBJECTS      = TIMSORT_ERR_GENERAL + 13
+Public Const TIMSORT_ERR_ARG_NOT_ARRAY As Long                      = TIMSORT_ERR_GENERAL + 1
+Public Const TIMSORT_ERR_ARG_NOT_ONE_DIMENSIONAL_ARRAY As Long      = TIMSORT_ERR_GENERAL + 2
+Public Const TIMSORT_ERR_ARG_COLLECTION_NOTHING As Long             = TIMSORT_ERR_GENERAL + 3
+Public Const TIMSORT_ERR_ARG_INVALID_ITEMSCOUNT As Long             = TIMSORT_ERR_GENERAL + 4
+Public Const TIMSORT_ERR_ARG_INVALID_RANGE As Long                  = TIMSORT_ERR_GENERAL + 5
+Public Const TIMSORT_ERR_ARG_OUT_OF_BOUNDS As Long                  = TIMSORT_ERR_GENERAL + 6
+Public Const TIMSORT_ERR_ARG_INVALID_START As Long                  = TIMSORT_ERR_GENERAL + 7
+Public Const TIMSORT_ERR_ARG_LENGTH_NOT_POSITIVE As Long            = TIMSORT_ERR_GENERAL + 8
+Public Const TIMSORT_ERR_ARG_INDEX_OUT_OF_RANGE As Long             = TIMSORT_ERR_GENERAL + 9
+Public Const TIMSORT_ERR_ARG_RUN_LENGTHS_POSITIVE As Long           = TIMSORT_ERR_GENERAL + 10
+Public Const TIMSORT_ERR_ARG_RUN_BASE_CONSISTENCY As Long           = TIMSORT_ERR_GENERAL + 11
+Public Const TIMSORT_ERR_ARG_UNSUPPORTED_TYPE As Long               = TIMSORT_ERR_GENERAL + 12
+Public Const TIMSORT_ERR_ARG_NO_COMPARATOR_FOR_OBJECTS As Long      = TIMSORT_ERR_GENERAL + 13
 
 ' State/stack inconsistency errors (STATE)
-Public Const TIMSORT_ERR_STATE_REQUIRED_SIZE_NEGATIVE       = TIMSORT_ERR_GENERAL + 65   ' requiredSize < 0
-Public Const TIMSORT_ERR_STATE_RUN_STACK_MISMATCH           = TIMSORT_ERR_GENERAL + 66   ' runBase/runLen init mismatch
-Public Const TIMSORT_ERR_STATE_STACK_SIZE_NEGATIVE          = TIMSORT_ERR_GENERAL + 67   ' stackSize < 0
+Public Const TIMSORT_ERR_STATE_REQUIRED_SIZE_NEGATIVE As Long       = TIMSORT_ERR_GENERAL + 65   ' requiredSize < 0
+Public Const TIMSORT_ERR_STATE_RUN_STACK_MISMATCH As Long           = TIMSORT_ERR_GENERAL + 66   ' runBase/runLen init mismatch
+Public Const TIMSORT_ERR_STATE_STACK_SIZE_NEGATIVE As Long          = TIMSORT_ERR_GENERAL + 67   ' stackSize < 0
 
 ' <summary>
 ' Upper bound used when computing TimSort's minimum run length.
