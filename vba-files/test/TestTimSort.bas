@@ -106,7 +106,7 @@ Private Sub Test_EmptyArray()
     Dim arr() As Variant
     ReDim arr(-1 To -1)
     Dim result As Variant
-    result = VbaTimSort.SortArray(arr, Nothing)
+    result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = (LBound(result) = -1 And UBound(result) = -1)
     RecordResult "Sort_EmptyArray", passed, IIf(passed, "", "Expected empty array bounds (-1 To -1)")
 End Sub
@@ -115,7 +115,7 @@ Private Sub Test_SingleElement()
     Dim arr(0 To 0) As Variant
     arr(0) = 42
     Dim result As Variant
-    result = VbaTimSort.SortArray(arr, Nothing)
+    result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = (result(0) = 42)
     RecordResult "Sort_SingleElement", passed, IIf(passed, "", "Expected [42], got " & ArrayToString(result))
 End Sub
@@ -128,7 +128,7 @@ Private Sub Test_MultiDimensionalElement()
     Dim result As Variant
     On Error Resume Next
     Err.Clear
-    result = VbaTimSort.SortArray(arr, Nothing)
+    result = VbaTimSort.SortArray(arr)
     If Err.Number = vbObjectError + 7408 Then raised = True
     On Error GoTo 0
     RecordResult "Sort_MultiDimensionalElement_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & Err.Number)
@@ -142,7 +142,7 @@ Private Sub Test_JaggedArray()
     Dim result As Variant
     On Error Resume Next
     Err.Clear
-    result = VbaTimSort.SortArray(arr, Nothing)
+    result = VbaTimSort.SortArray(arr)
     If Err.Number = vbObjectError + 7408 Then raised = True
     On Error GoTo 0
     RecordResult "Sort_JaggedArray_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & Err.Number)
@@ -153,7 +153,7 @@ End Sub
 Private Sub Test_Numbers_Ascending()
     Dim arr As Variant: arr = Array(5, 3, 8, 1, 2, 7, 4, 6)
     Dim expected As Variant: expected = Array(1, 2, 3, 4, 5, 6, 7, 8)
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Numbers_Ascending", passed, IIf(passed, "", "Expected " & ArrayToString(expected) & ", got " & ArrayToString(result))
 End Sub
@@ -161,7 +161,7 @@ End Sub
 Private Sub Test_Numbers_Descending()
     Dim arr As Variant: arr = Array(5, 3, 8, 1, 2, 7, 4, 6)
     Dim expected As Variant: expected = Array(8, 7, 6, 5, 4, 3, 2, 1)
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing, descending:=True)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr, descending:=True)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Numbers_Descending", passed, IIf(passed, "", "Expected " & ArrayToString(expected) & ", got " & ArrayToString(result))
 End Sub
@@ -169,7 +169,7 @@ End Sub
 Private Sub Test_Numbers_WithNegatives()
     Dim arr As Variant: arr = Array(0, -3, 5, -1, 2, -7)
     Dim expected As Variant: expected = Array(-7, -3, -1, 0, 2, 5)
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Numbers_WithNegatives", passed, IIf(passed, "", "Expected " & ArrayToString(expected) & ", got " & ArrayToString(result))
 End Sub
@@ -177,7 +177,7 @@ End Sub
 Private Sub Test_Numbers_WithDecimals()
     Dim arr As Variant: arr = Array(1.5, 0.3, 2.7, 0.1, 1.1)
     Dim expected As Variant: expected = Array(0.1, 0.3, 1.1, 1.5, 2.7)
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Numbers_WithDecimals", passed, IIf(passed, "", "Expected " & ArrayToString(expected) & ", got " & ArrayToString(result))
 End Sub
@@ -185,7 +185,7 @@ End Sub
 Private Sub Test_Numbers_Duplicates()
     Dim arr As Variant: arr = Array(3, 1, 2, 1, 3, 2)
     Dim expected As Variant: expected = Array(1, 1, 2, 2, 3, 3)
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Numbers_Duplicates", passed, IIf(passed, "", "Expected " & ArrayToString(expected) & ", got " & ArrayToString(result))
 End Sub
@@ -193,7 +193,7 @@ End Sub
 Private Sub Test_Numbers_AllSame()
     Dim arr As Variant: arr = Array(5, 5, 5, 5, 5)
     Dim expected As Variant: expected = Array(5, 5, 5, 5, 5)
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Numbers_AllSame", passed, IIf(passed, "", "Expected " & ArrayToString(expected) & ", got " & ArrayToString(result))
 End Sub
@@ -203,7 +203,7 @@ End Sub
 Private Sub Test_AlreadySorted()
     Dim arr As Variant: arr = Array(1, 2, 3, 4, 5, 6, 7, 8)
     Dim expected As Variant: expected = Array(1, 2, 3, 4, 5, 6, 7, 8)
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_AlreadySorted", passed, IIf(passed, "", "Expected " & ArrayToString(expected) & ", got " & ArrayToString(result))
 End Sub
@@ -211,7 +211,7 @@ End Sub
 Private Sub Test_ReverseSorted()
     Dim arr As Variant: arr = Array(8, 7, 6, 5, 4, 3, 2, 1)
     Dim expected As Variant: expected = Array(1, 2, 3, 4, 5, 6, 7, 8)
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_ReverseSorted", passed, IIf(passed, "", "Expected " & ArrayToString(expected) & ", got " & ArrayToString(result))
 End Sub
@@ -226,7 +226,7 @@ Private Sub Test_Size32()
         arr(i) = 33 - i  ' Reverse order
         expected(i) = i
     Next i
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Size32", passed, IIf(passed, "", "Size-32 sort failed")
 End Sub
@@ -239,7 +239,7 @@ Private Sub Test_Size64()
         arr(i) = 65 - i
         expected(i) = i
     Next i
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Size64", passed, IIf(passed, "", "Size-64 sort failed")
 End Sub
@@ -252,7 +252,7 @@ Private Sub Test_Size1000()
         arr(i) = 1001 - i
         expected(i) = i
     Next i
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Size1000", passed, IIf(passed, "", "Size-1000 sort failed")
 End Sub
@@ -262,7 +262,7 @@ End Sub
 Private Sub Test_Strings_Ascending()
     Dim arr As Variant: arr = Array("banana", "apple", "cherry", "date")
     Dim expected As Variant: expected = Array("apple", "banana", "cherry", "date")
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Strings_Ascending", passed, IIf(passed, "", "Expected " & ArrayToString(expected) & ", got " & ArrayToString(result))
 End Sub
@@ -270,7 +270,7 @@ End Sub
 Private Sub Test_Strings_Descending()
     Dim arr As Variant: arr = Array("banana", "apple", "cherry", "date")
     Dim expected As Variant: expected = Array("date", "cherry", "banana", "apple")
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing, descending:=True)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr, descending:=True)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Strings_Descending", passed, IIf(passed, "", "Expected " & ArrayToString(expected) & ", got " & ArrayToString(result))
 End Sub
@@ -288,7 +288,7 @@ Private Sub Test_Dates_Ascending()
     expected(1) = CDate("2023/01/01")
     expected(2) = CDate("2024/03/15")
     expected(3) = CDate("2024/12/31")
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim passed As Boolean: passed = ArraysEqual(expected, result)
     RecordResult "Sort_Dates_Ascending", passed, IIf(passed, "", "Date sort failed")
 End Sub
@@ -344,7 +344,7 @@ Private Sub Test_SortCollection_Numbers()
     coll.Add 5: coll.Add 2: coll.Add 8: coll.Add 1: coll.Add 4
     Dim expected As Variant: expected = Array(1, 2, 4, 5, 8)
     Dim sortedColl As Collection
-    Set sortedColl = VbaTimSort.SortCollection(coll, Nothing)
+    Set sortedColl = VbaTimSort.SortCollection(coll)
     Dim passed As Boolean: passed = (sortedColl.Count = 5)
     Dim i As Long
     If passed Then
@@ -361,7 +361,7 @@ End Sub
 Private Sub Test_SortCollection_Empty()
     Dim coll As New Collection
     Dim sortedColl As Collection
-    Set sortedColl = VbaTimSort.SortCollection(coll, Nothing)
+    Set sortedColl = VbaTimSort.SortCollection(coll)
     Dim passed As Boolean: passed = (sortedColl.Count = 0)
     RecordResult "SortCollection_Empty", passed, IIf(passed, "", "Expected empty collection")
 End Sub
@@ -372,7 +372,7 @@ Private Sub Test_Error_NonArray()
     Dim raised As Boolean: raised = False
     On Error Resume Next
     Err.Clear
-    Dim result As Variant: result = VbaTimSort.SortArray("not an array", Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray("not an array")
     If Err.Number = vbObjectError + 7404 Then raised = True
     On Error GoTo 0
     RecordResult "Error_NonArray_Raises7404", raised, IIf(raised, "", "Expected error 7404 but got " & Err.Number)
@@ -385,7 +385,7 @@ Private Sub Test_Error_ObjectWithoutComparator()
     Set arr(1) = New PersonClass
     On Error Resume Next
     Err.Clear
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     If Err.Number = vbObjectError + 7301 Then raised = True
     On Error GoTo 0
     RecordResult "Error_ObjectWithoutComparator_Raises7301", raised, IIf(raised, "", "Expected error 7301 but got " & Err.Number)
@@ -401,7 +401,7 @@ Private Sub Benchmark_Random(ByVal size As Long)
         arr(i) = Int(Rnd() * 1000000)
     Next i
     Dim t As Double: t = Timer
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim elapsed As Double: elapsed = Timer - t
     RecordResult "Benchmark_Random_" & size, True, Format(elapsed, "0.000") & " sec"
 End Sub
@@ -412,7 +412,7 @@ Private Sub Benchmark_AlreadySorted(ByVal size As Long)
     Dim i As Long
     For i = 1 To size: arr(i) = i: Next i
     Dim t As Double: t = Timer
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim elapsed As Double: elapsed = Timer - t
     RecordResult "Benchmark_AlreadySorted_" & size, True, Format(elapsed, "0.000") & " sec"
 End Sub
@@ -423,7 +423,7 @@ Private Sub Benchmark_Reversed(ByVal size As Long)
     Dim i As Long
     For i = 1 To size: arr(i) = size + 1 - i: Next i
     Dim t As Double: t = Timer
-    Dim result As Variant: result = VbaTimSort.SortArray(arr, Nothing)
+    Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim elapsed As Double: elapsed = Timer - t
     RecordResult "Benchmark_Reversed_" & size, True, Format(elapsed, "0.000") & " sec"
 End Sub
