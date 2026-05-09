@@ -6,7 +6,8 @@ Option Explicit
 Private Const INITIAL_RUN_STACK_SIZE As Long = 16
 
 '/ <summary>
-'/ Sorts an array in place using the TimSort algorithm. The original array is not modified; a new sorted array is returned.
+'/ Sorts a one-dimensional array using the TimSort algorithm.
+'/ The original array is not modified; a new sorted array is returned.
 '/ </summary>
 '/ <param name="arr">The array to be sorted. Must be a one-dimensional array.</param>
 '/ <param name="comparator">
@@ -15,17 +16,17 @@ Private Const INITIAL_RUN_STACK_SIZE As Long = 16
 '/ </param>
 '/ <param name="descending">If True, sorts in descending order. Default is False (ascending order).</param>
 '/ <returns>The sorted array. The original array is not modified in place.</returns>
-Public Function SortArrayInPlace(ByRef arr As Variant, ByVal comparator As IComparator, Optional descending As Boolean = False) As Variant
+Public Function SortArray(ByRef arr As Variant, ByVal comparator As IComparator, Optional descending As Boolean = False) As Variant
     Dim vNewArray As Variant
     If Not IsArray(arr) Then
-        Err.Raise vbObjectError + 7404, "VbaTimSort.SortArrayInPlace", "Input must be an array."
+        Err.Raise vbObjectError + 7404, "VbaTimSort.SortArray", "Input must be an array."
     ElseIf IsEmptyArray(arr) Then
         ' An unallocated array is considered empty, so we can return a new empty array.
         ReDim vNewArray(-1 To -1)
-        SortArrayInPlace = vNewArray
+        SortArray = vNewArray
         Exit Function
     ElseIf IsMultiDimensionalArray(arr) Then
-        Err.Raise vbObjectError + 7408, "VbaTimSort.SortArrayInPlace", "Input array must be one-dimensional."
+        Err.Raise vbObjectError + 7408, "VbaTimSort.SortArray", "Input array must be one-dimensional."
     End If
 
     Dim vUb As Long: vUb = UBound(arr)
@@ -37,13 +38,13 @@ Public Function SortArrayInPlace(ByRef arr As Variant, ByVal comparator As IComp
         If IsArray(arr(i)) Then
             ' TimSort is not designed to sort arrays that contain other arrays as elements.
             ' This is a limitation of this implementation, and we will raise an error if we encounter this case.
-            Err.Raise vbObjectError + 7408, "VbaTimSort.SortArrayInPlace", "Input array must be one-dimensional and cannot contain arrays as elements."
+            Err.Raise vbObjectError + 7408, "VbaTimSort.SortArray", "Input array must be one-dimensional and cannot contain arrays as elements."
         End If
 
         AssignVariant vNewArray(i - vLb), arr(i)
     Next i
 
-    SortArrayInPlace = TimSortCore(vNewArray, comparator, descending)
+    SortArray = TimSortCore(vNewArray, comparator, descending)
 End Function
 
 ' / <summary>
