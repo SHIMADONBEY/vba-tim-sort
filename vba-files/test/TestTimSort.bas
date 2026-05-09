@@ -127,6 +127,7 @@ Private Sub Test_MultiDimensionalElement()
     arr(1, 0) = 1: arr(1, 1) = 2
     Dim result As Variant
     On Error Resume Next
+    Err.Clear
     result = VbaTimSort.SortArrayInPlace(arr, Nothing)
     If Err.Number = vbObjectError + 7408 Then raised = True
     On Error GoTo 0
@@ -140,6 +141,7 @@ Private Sub Test_JaggedArray()
     arr(1) = Array(1, 2)
     Dim result As Variant
     On Error Resume Next
+    Err.Clear
     result = VbaTimSort.SortArrayInPlace(arr, Nothing)
     If Err.Number = vbObjectError + 7408 Then raised = True
     On Error GoTo 0
@@ -369,6 +371,7 @@ End Sub
 Private Sub Test_Error_NonArray()
     Dim raised As Boolean: raised = False
     On Error Resume Next
+    Err.Clear
     Dim result As Variant: result = VbaTimSort.SortArrayInPlace("not an array", Nothing)
     If Err.Number = vbObjectError + 7404 Then raised = True
     On Error GoTo 0
@@ -381,6 +384,7 @@ Private Sub Test_Error_ObjectWithoutComparator()
     Set arr(0) = New PersonClass
     Set arr(1) = New PersonClass
     On Error Resume Next
+    Err.Clear
     Dim result As Variant: result = VbaTimSort.SortArrayInPlace(arr, Nothing)
     If Err.Number = vbObjectError + 7301 Then raised = True
     On Error GoTo 0
