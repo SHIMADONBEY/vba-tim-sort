@@ -3,6 +3,52 @@ Attribute VB_Name = "VbaTimSort"
 ' TimSort was designed to perform well on many kinds of real-world data, and it is the default sorting algorithm in Python and Java.
 Option Explicit
 
+'/ <summary>
+' Error codes for VbaTimSort.
+' All error codes are based on vbObjectError to avoid conflicts with built-in VBA error codes.
+'/ </summary>
+Public Const TIMSORT_ERR_BASE As Long                               = vbObjectError
+
+' General errors (ERR)
+Public Const TIMSORT_ERR_GENERAL As Long                            = TIMSORT_ERR_BASE + 8192
+
+' Argument-related errors (ARG)
+Public Const TIMSORT_ERR_ARG_NOT_ARRAY As Long                      = TIMSORT_ERR_GENERAL + 1
+Public Const TIMSORT_ERR_ARG_NOT_ONE_DIMENSIONAL_ARRAY As Long      = TIMSORT_ERR_GENERAL + 2
+Public Const TIMSORT_ERR_ARG_COLLECTION_NOTHING As Long             = TIMSORT_ERR_GENERAL + 3
+Public Const TIMSORT_ERR_ARG_INVALID_ITEMSCOUNT As Long             = TIMSORT_ERR_GENERAL + 4
+Public Const TIMSORT_ERR_ARG_INVALID_RANGE As Long                  = TIMSORT_ERR_GENERAL + 5
+Public Const TIMSORT_ERR_ARG_OUT_OF_BOUNDS As Long                  = TIMSORT_ERR_GENERAL + 6
+Public Const TIMSORT_ERR_ARG_INVALID_START As Long                  = TIMSORT_ERR_GENERAL + 7
+Public Const TIMSORT_ERR_ARG_LENGTH_NOT_POSITIVE As Long            = TIMSORT_ERR_GENERAL + 8
+Public Const TIMSORT_ERR_ARG_INDEX_OUT_OF_RANGE As Long             = TIMSORT_ERR_GENERAL + 9
+Public Const TIMSORT_ERR_ARG_RUN_LENGTHS_POSITIVE As Long           = TIMSORT_ERR_GENERAL + 10
+Public Const TIMSORT_ERR_ARG_RUN_BASE_CONSISTENCY As Long           = TIMSORT_ERR_GENERAL + 11
+Public Const TIMSORT_ERR_ARG_UNSUPPORTED_TYPE As Long               = TIMSORT_ERR_GENERAL + 12
+Public Const TIMSORT_ERR_ARG_NO_COMPARATOR_FOR_OBJECTS As Long      = TIMSORT_ERR_GENERAL + 13
+
+' State/stack inconsistency errors (STATE)
+Public Const TIMSORT_ERR_STATE_REQUIRED_SIZE_NEGATIVE As Long       = TIMSORT_ERR_GENERAL + 65   ' requiredSize < 0
+Public Const TIMSORT_ERR_STATE_RUN_STACK_MISMATCH As Long           = TIMSORT_ERR_GENERAL + 66   ' runBase/runLen init mismatch
+Public Const TIMSORT_ERR_STATE_STACK_SIZE_NEGATIVE As Long          = TIMSORT_ERR_GENERAL + 67   ' stackSize < 0
+
+' <summary>
+' Upper bound used when computing TimSort's minimum run length.
+' The minimum run length returned by GetMinRunLength is derived from the input size and this threshold.
+' Runs shorter than the computed minimum may be extended and sorted using binary insertion sort before merging.
+' Setting this value too high can lead to larger minimum runs, while setting it too low can lead to too many runs and excessive merging.
+' 64 is a commonly used value that provides a good balance for many sorting tasks.
+'</summary>
+Private Const MAX_RUN_LENGTH As Long = 64
+
+' <summary>
+' Initial size of the run stack.
+' The run stack will grow dynamically if needed, but this is the initial allocation size.
+' The maximum stack size is determined by the maximum number of runs that can be created,
+' which is related to the size of the input array and the minimum run length.
+' In practice, this initial size should be sufficient for most sorting tasks,
+' but it can be increased if you expect to sort very large arrays with many runs.
+'</summary>
 Private Const INITIAL_RUN_STACK_SIZE As Long = 16
 
 ' / <summary>
@@ -20,14 +66,14 @@ Private Const INITIAL_RUN_STACK_SIZE As Long = 16
 Public Function SortArray(ByRef arr As Variant, Optional ByVal comparator As IComparator = Nothing, Optional descending As Boolean = False) As Variant
     Dim vNewArray As Variant
     If Not IsArray(arr) Then
-        Err.Raise vbObjectError + 7404, "VbaTimSort.SortArray", "Input must be an array."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_NOT_ARRAY, "VbaTimSort.SortArray", "Input must be an array."
     ElseIf IsEmptyArray(arr) Then
         ' An unallocated array is considered empty, so we can return a new empty array.
         ReDim vNewArray(-1 To -1)
         SortArray = vNewArray
         Exit Function
     ElseIf IsMultiDimensionalArray(arr) Then
-        Err.Raise vbObjectError + 7408, "VbaTimSort.SortArray", "Input array must be one-dimensional."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_NOT_ONE_DIMENSIONAL_ARRAY, "VbaTimSort.SortArray", "Input array must be one-dimensional."
     End If
 
     Dim vUb As Long: vUb = UBound(arr)
@@ -39,7 +85,7 @@ Public Function SortArray(ByRef arr As Variant, Optional ByVal comparator As ICo
         If IsArray(arr(i)) Then
             ' TimSort is not designed to sort arrays that contain other arrays as elements.
             ' This is a limitation of this implementation, and we will raise an error if we encounter this case.
-            Err.Raise vbObjectError + 7408, "VbaTimSort.SortArray", "Input array must be one-dimensional and cannot contain arrays as elements."
+            Err.Raise VbaTimSort.TIMSORT_ERR_ARG_NOT_ONE_DIMENSIONAL_ARRAY, "VbaTimSort.SortArray", "Input array must be one-dimensional and cannot contain arrays as elements."
         End If
 
         AssignVariant vNewArray(i - vLb), arr(i)
@@ -61,7 +107,7 @@ End Function
 ' / <returns>A new Collection containing the sorted elements.</returns>
 Public Function SortCollection(ByRef coll As Collection, Optional ByVal comparator As IComparator = Nothing, Optional descending As Boolean = False) As Collection
     If coll Is Nothing Then
-        Err.Raise vbObjectError + 7402, "VbaTimSort.SortCollection", "Input Collection cannot be Nothing."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_COLLECTION_NOTHING, "VbaTimSort.SortCollection", "Input Collection cannot be Nothing."
     ElseIf coll.Count = 0 Then
         ' An empty collection is already sorted, so we can return a new empty collection.
         Set SortCollection = New Collection
@@ -89,7 +135,7 @@ End Function
 ' / </summary>
 Private Function TimSortCore(ByRef arr As Variant, ByVal comparator As IComparator, ByVal descending As Boolean) As Variant
     If Not IsArray(arr) Then
-        Err.Raise vbObjectError + 7404, "VbaTimSort.TimSortCore", "Input must be an array."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_NOT_ARRAY, "VbaTimSort.TimSortCore", "Input must be an array."
     End If
 
     Dim n As Long: n = UBound(arr) - LBound(arr) + 1
@@ -156,7 +202,7 @@ Private Function InternalCompare(a As Variant, b As Variant, comparator As IComp
 
     If (IsObject(a) Or IsObject(b)) Then
         If comparator Is Nothing Then
-            Err.Raise vbObjectError + 7301, "VbaTimSort.InternalCompare", "Object comparison requires IComparator."
+            Err.Raise VbaTimSort.TIMSORT_ERR_ARG_NO_COMPARATOR_FOR_OBJECTS, "VbaTimSort.InternalCompare", "Object comparison requires IComparator."
         End If
         vCompared = comparator.Compare(a, b)
     ElseIf (VarType(a) = vbString And VarType(b) = vbString) Then
@@ -178,28 +224,29 @@ Private Function InternalCompare(a As Variant, b As Variant, comparator As IComp
             vCompared = 0
         End If
     Else
-        Err.Raise vbObjectError + 7302, "VbaTimSort.InternalCompare", "Unsupported data types for comparison."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_UNSUPPORTED_TYPE, "VbaTimSort.InternalCompare", "Unsupported data types for comparison."
     End If
 
     InternalCompare = Sgn(vCompared * IIf(descending, -1, 1))
 End Function
 
 '/ <summary>
-'/ Calculates the minimum run length for a given number of items. This is used to determine how to break the array into runs for the TimSort algorithm.
+'/ Calculates the minimum run length for a given number of items.
+'/ This is used to determine how to break the array into runs for the TimSort algorithm.
 '/ </summary>
 '/ <param name="ItemsCount">The total number of items to be sorted. Must be a positive integer.</param>
 '/ <returns>The minimum run length to be used in the TimSort algorithm.</returns>
 Private Function GetMinRunLength(ByVal ItemsCount As Long) As Long
     If ItemsCount <= 0 Then
-        Err.Raise vbObjectError + 7401, "VbaTimSort.GetMinRunLength", "ItemsCount must be positive."
-    ElseIf ItemsCount < 64 Then
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_LENGTH_NOT_POSITIVE, "VbaTimSort.GetMinRunLength", "ItemsCount must be positive."
+    ElseIf ItemsCount < MAX_RUN_LENGTH Then
         GetMinRunLength = ItemsCount
         Exit Function
     End If
 
     Dim n As Long: n = ItemsCount
     Dim r As Long: r = 0
-    Do While n >= 64
+    Do While n >= MAX_RUN_LENGTH
         r = r Or (n And 1)
         n = n \ 2
     Loop
@@ -224,11 +271,11 @@ Private Function CountRunAndMakeAscending( _
     ByVal descending As Boolean _
 ) As Long
     If lo > hi Then
-        Err.Raise vbObjectError + 7403, "VbaTimSort.CountRunAndMakeAscending", "lo must be less than or equal to hi."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE, "VbaTimSort.CountRunAndMakeAscending", "lo must be less than or equal to hi."
     ElseIf Not IsArray(arr) Then
-        Err.Raise vbObjectError + 7404, "VbaTimSort.CountRunAndMakeAscending", "Input must be an array."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_NOT_ARRAY, "VbaTimSort.CountRunAndMakeAscending", "Input must be an array."
     ElseIf LBound(arr) > hi Or UBound(arr) < lo Then
-        Err.Raise vbObjectError + 7405, "VbaTimSort.CountRunAndMakeAscending", "lo and hi must be within the bounds of the array."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_OUT_OF_BOUNDS, "VbaTimSort.CountRunAndMakeAscending", "lo and hi must be within the bounds of the array."
     End If
 
     If (lo = hi) Then
@@ -271,11 +318,11 @@ End Function
 '/ <param name="hi">The upper index of the range to reverse. Must be greater than or equal to 'lo'.</param>
 Private Sub ReverseRange(ByRef arr As Variant, ByVal lo As Long, ByVal hi As Long)
     If lo > hi Then
-        Err.Raise vbObjectError + 7403, "VbaTimSort.ReverseRange", "lo must be less than or equal to hi."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE, "VbaTimSort.ReverseRange", "lo must be less than or equal to hi."
     ElseIf Not IsArray(arr) Then
-        Err.Raise vbObjectError + 7404, "VbaTimSort.ReverseRange", "Input must be an array."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_NOT_ARRAY, "VbaTimSort.ReverseRange", "Input must be an array."
     ElseIf LBound(arr) > hi Or UBound(arr) < lo Then
-        Err.Raise vbObjectError + 7405, "VbaTimSort.ReverseRange", "lo and hi must be within the bounds of the array."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_OUT_OF_BOUNDS, "VbaTimSort.ReverseRange", "lo and hi must be within the bounds of the array."
     End If
 
     Dim i As Long: i = lo
@@ -308,11 +355,11 @@ Private Sub BinaryInsertionSort( _
     ByVal descending As Boolean _
 )
     If IsArray(arr) = False Then
-        Err.Raise vbObjectError + 7404, "VbaTimSort.BinaryInsertionSort", "Input must be an array."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_NOT_ARRAY, "VbaTimSort.BinaryInsertionSort", "Input must be an array."
     ElseIf lo < LBound(arr) Or hi > UBound(arr) Then
-        Err.Raise vbObjectError + 7405, "VbaTimSort.BinaryInsertionSort", "lo and hi must be within the bounds of the array."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_OUT_OF_BOUNDS, "VbaTimSort.BinaryInsertionSort", "lo and hi must be within the bounds of the array."
     ElseIf start < lo Or start > hi + 1 Then
-        Err.Raise vbObjectError + 7406, "VbaTimSort.BinaryInsertionSort", "start must be greater than or equal to lo and less than or equal to hi + 1."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE, "VbaTimSort.BinaryInsertionSort", "start must be greater than or equal to lo and less than or equal to hi + 1."
     End If
 
     Dim i As Long
@@ -358,9 +405,9 @@ Private Sub PushRun( _
     ByVal length As Long _
 )
     If base < 0 Then
-        Err.Raise vbObjectError + 7406, "VbaTimSort.PushRun", "base must be non-negative."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_OUT_OF_BOUNDS, "VbaTimSort.PushRun", "base must be non-negative."
     ElseIf length <= 0 Then
-        Err.Raise vbObjectError + 7407, "VbaTimSort.PushRun", "length must be positive."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_LENGTH_NOT_POSITIVE, "VbaTimSort.PushRun", "length must be positive."
     End If
 
     EnsureStackCapacity runBase, runLen, stackSize + 1
@@ -388,9 +435,9 @@ Private Sub MergeCollapse( _
     ByVal descending As Boolean _
 )
     If IsArray(arr) = False Then
-        Err.Raise vbObjectError + 7404, "VbaTimSort.MergeCollapse", "Input must be an array."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_NOT_ARRAY, "VbaTimSort.MergeCollapse", "Input must be an array."
     ElseIf stackSize < 0 Then
-        Err.Raise vbObjectError + 7414, "VbaTimSort.MergeCollapse", "stackSize must be non-negative."
+        Err.Raise VbaTimSort.TIMSORT_ERR_STATE_STACK_SIZE_NEGATIVE, "VbaTimSort.MergeCollapse", "stackSize must be non-negative."
     End If
 
     If stackSize < 2 Then
@@ -454,9 +501,9 @@ Private Sub MergeForceCollapse( _
     ByVal descending As Boolean _
 )
     If IsArray(arr) = False Then
-        Err.Raise vbObjectError + 7404, "VbaTimSort.MergeForceCollapse", "Input must be an array."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_NOT_ARRAY, "VbaTimSort.MergeForceCollapse", "Input must be an array."
     ElseIf stackSize < 0 Then
-        Err.Raise vbObjectError + 7414, "VbaTimSort.MergeForceCollapse", "stackSize must be non-negative."
+        Err.Raise VbaTimSort.TIMSORT_ERR_STATE_STACK_SIZE_NEGATIVE, "VbaTimSort.MergeForceCollapse", "stackSize must be non-negative."
     End If
 
     Do While stackSize > 1
@@ -489,7 +536,7 @@ Private Sub MergeAt( _
     ByVal descending As Boolean _
 )
     If i < 0 Or i >= stackSize - 1 Then
-        Err.Raise vbObjectError + 7409, "VbaTimSort.MergeAt", "i must be between 0 and stackSize - 2 inclusive."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_OUT_OF_BOUNDS, "VbaTimSort.MergeAt", "i must be between 0 and stackSize - 2 inclusive."
     End If
 
     Dim vBase1 As Long: vBase1 = runBase(i)
@@ -498,9 +545,9 @@ Private Sub MergeAt( _
     Dim vLen2 As Long: vLen2 = runLen(i + 1)
 
     If vLen1 <= 0 Or vLen2 <= 0 Then
-        Err.Raise vbObjectError + 7410, "VbaTimSort.MergeAt", "run lengths must be positive."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_RUN_LENGTHS_POSITIVE, "VbaTimSort.MergeAt", "run lengths must be positive."
     ElseIf (vBase1 + vLen1 <> vBase2) Then
-        Err.Raise vbObjectError + 7411, "VbaTimSort.MergeAt", "runBase[i] + runLen[i] must be equal to runBase[i + 1]."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_RUN_BASE_CONSISTENCY, "VbaTimSort.MergeAt", "runBase[i] + runLen[i] must be equal to runBase[i + 1]."
     End If
 
     If (vLen1 <= vLen2) Then
@@ -540,11 +587,11 @@ Private Sub MergeLow( _
     ByVal descending As Boolean _
 )
     If len1 <= 0 Or len2 <= 0 Then
-        Err.Raise vbObjectError + 7410, "VbaTimSort.MergeLow", "run lengths must be positive."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_RUN_LENGTHS_POSITIVE, "VbaTimSort.MergeLow", "run lengths must be positive."
     ElseIf len1 > len2 Then
-        Err.Raise vbObjectError + 7411, "VbaTimSort.MergeLow", "len1 must be less than or equal to len2."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE, "VbaTimSort.MergeLow", "len1 must be less than or equal to len2."
     ElseIf (base1 + len1 <> base2) Then
-        Err.Raise vbObjectError + 7411, "VbaTimSort.MergeLow", "base1 + len1 must be equal to base2."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_RUN_BASE_CONSISTENCY, "VbaTimSort.MergeLow", "base1 + len1 must be equal to base2."
     End If
 
     Dim vTemp() As Variant
@@ -600,11 +647,11 @@ Private Sub MergeHigh( _
     ByVal descending As Boolean _
 )
     If len1 <= 0 Or len2 <= 0 Then
-        Err.Raise vbObjectError + 7410, "VbaTimSort.MergeHigh", "run lengths must be positive."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_RUN_LENGTHS_POSITIVE, "VbaTimSort.MergeHigh", "run lengths must be positive."
     ElseIf len1 < len2 Then
-        Err.Raise vbObjectError + 7411, "VbaTimSort.MergeHigh", "len1 must be greater than or equal to len2."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE, "VbaTimSort.MergeHigh", "len1 must be greater than or equal to len2."
     ElseIf (base1 + len1 <> base2) Then
-        Err.Raise vbObjectError + 7411, "VbaTimSort.MergeHigh", "base1 + len1 must be equal to base2."
+        Err.Raise VbaTimSort.TIMSORT_ERR_ARG_RUN_BASE_CONSISTENCY, "VbaTimSort.MergeHigh", "base1 + len1 must be equal to base2."
     End If
 
     Dim vTemp() As Variant
@@ -657,9 +704,9 @@ Private Sub EnsureStackCapacity( _
     Dim vHasRunLen As Boolean: vHasRunLen = HasArrayAllocated(runLen)
 
     If requiredSize < 0 Then
-        Err.Raise vbObjectError + 7412, "VbaTimSort.EnsureStackCapacity", "requiredSize must be non-negative."
+        Err.Raise VbaTimSort.TIMSORT_ERR_STATE_REQUIRED_SIZE_NEGATIVE, "VbaTimSort.EnsureStackCapacity", "requiredSize must be non-negative."
     ElseIf vHasRunBase XOr vHasRunLen Then
-        Err.Raise vbObjectError + 7413, "VbaTimSort.EnsureStackCapacity", "runBase and runLen must be both initialized or both uninitialized."
+        Err.Raise VbaTimSort.TIMSORT_ERR_STATE_RUN_STACK_MISMATCH, "VbaTimSort.EnsureStackCapacity", "runBase and runLen must be both initialized or both uninitialized."
     ElseIf requiredSize = 0 Then
         ' no required size, no need to allocate
         Exit Sub
