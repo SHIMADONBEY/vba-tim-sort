@@ -159,7 +159,7 @@ Private Function InternalCompare(a As Variant, b As Variant, comparator As IComp
         vCompared = comparator.Compare(a, b)
     ElseIf (VarType(a) = vbString And VarType(b) = vbString) Then
         vCompared = StrComp(a, b, vbTextCompare)
-    ElseIf (IsNumeric(a) And IsNumeric(b)) Then
+    ElseIf (VarType(a) = vbDate And VarType(b) = vbDate) Then
         If a < b Then
             vCompared = -1
         ElseIf a > b Then
@@ -167,7 +167,7 @@ Private Function InternalCompare(a As Variant, b As Variant, comparator As IComp
         Else
             vCompared = 0
         End If
-    ElseIf (IsDate(a) And IsDate(b)) Then
+    ElseIf (IsNumeric(a) And IsNumeric(b)) Then
         If a < b Then
             vCompared = -1
         ElseIf a > b Then
