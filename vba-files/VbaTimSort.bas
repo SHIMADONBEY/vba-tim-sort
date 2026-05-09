@@ -3,6 +3,32 @@ Attribute VB_Name = "VbaTimSort"
 ' TimSort was designed to perform well on many kinds of real-world data, and it is the default sorting algorithm in Python and Java.
 Option Explicit
 
+'/ <summary>
+' Error codes for VbaTimSort.
+' All error codes are based on vbObjectError to avoid conflicts with built-in VBA error codes.
+'</summary>
+Public Const TIMSORT_ERR_BASE                = vbObjectError
+
+' Argument-related errors (ARG)
+
+Public Const TIMSORT_ERR_ARG_NOT_ARRAY                     = vbObjectError + 7404
+Public Const TIMSORT_ERR_ARG_INVALID_ITEMSCOUNT            = vbObjectError + 7401
+Public Const TIMSORT_ERR_ARG_INVALID_RANGE                 = vbObjectError + 7403
+Public Const TIMSORT_ERR_ARG_OUT_OF_BOUNDS                 = vbObjectError + 7405
+Public Const TIMSORT_ERR_ARG_INVALID_START                 = vbObjectError + 7406
+Public Const TIMSORT_ERR_ARG_LENGTH_NOT_POSITIVE           = vbObjectError + 7407
+Public Const TIMSORT_ERR_ARG_INDEX_OUT_OF_RANGE            = vbObjectError + 7409
+Public Const TIMSORT_ERR_ARG_RUN_LENGTHS_POSITIVE          = vbObjectError + 7410
+Public Const TIMSORT_ERR_ARG_RUN_BASE_CONSISTENCY          = vbObjectError + 7411
+Public Const TIMSORT_ERR_ARG_UNSUPPORTED_TYPE              = vbObjectError + 7302
+Public Const TIMSORT_ERR_ARG_NO_COMPARATOR_FOR_OBJECTS     = vbObjectError + 7301
+
+' State/stack inconsistency errors (STATE)
+Public Const TIMSORT_ERR_STATE_REQUIREDSIZE_NEGATIVE       = vbObjectError + 7412   ' requiredSize < 0
+Public Const TIMSORT_ERR_STATE_RUNSTACK_MISMATCH           = vbObjectError + 7413   ' runBase/runLen init mismatch
+Public Const TIMSORT_ERR_STATE_STACKSIZE_NEGATIVE          = vbObjectError + 7414   ' stackSize < 0
+
+' <summary> Initial size of the run stack. The run stack will grow dynamically if needed, but this is the initial allocation size. The maximum stack size is determined by the maximum number of runs that can be created, which is related to the size of the input array and the minimum run length. In practice, this initial size should be sufficient for most sorting tasks, but it can be increased if you expect to sort very large arrays with many runs.</summary>
 Private Const INITIAL_RUN_STACK_SIZE As Long = 16
 
 ' / <summary>
