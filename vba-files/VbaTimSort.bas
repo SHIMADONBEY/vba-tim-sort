@@ -12,11 +12,12 @@ Private Const INITIAL_RUN_STACK_SIZE As Long = 16
 '/ <param name="arr">The array to be sorted. Must be a one-dimensional array.</param>
 '/ <param name="comparator">
 '/ An optional IComparator implementation for custom object comparison.
-'/ If not provided, the function will attempt to compare elements using natural ordering (numbers, strings, dates).
+'/ This is required if the array contains objects that do not have a natural ordering or if you want to sort in a custom order.
+'/ If not provided, natural ordering is used for supported data types.
 '/ </param>
 '/ <param name="descending">If True, sorts in descending order. Default is False (ascending order).</param>
 '/ <returns>The sorted array. The original array is not modified in place.</returns>
-Public Function SortArray(ByRef arr As Variant, ByVal comparator As IComparator, Optional descending As Boolean = False) As Variant
+Public Function SortArray(ByRef arr As Variant, Optional ByVal comparator As IComparator = Nothing, Optional descending As Boolean = False) As Variant
     Dim vNewArray As Variant
     If Not IsArray(arr) Then
         Err.Raise vbObjectError + 7404, "VbaTimSort.SortArray", "Input must be an array."
@@ -51,10 +52,14 @@ End Function
 ' / Sorts a Collection using the TimSort algorithm. The original Collection is not modified; a new sorted Collection is returned.
 ' / </summary>
 ' / <param name="coll">The Collection to be sorted.</param>
-' / <param name="comparator">An optional IComparator implementation for custom object comparison.</param>
+' / <param name="comparator">
+' / An optional IComparator implementation for custom object comparison.
+' / This is required if the Collection contains objects that do not have a natural ordering or if you want to sort in a custom order.
+' / If not provided, natural ordering is used for supported data types.
+' / </param>
 ' / <param name="descending">If True, sorts in descending order. Default is False (ascending order).</param>
 ' / <returns>A new Collection containing the sorted elements.</returns>
-Public Function SortCollection(ByRef coll As Collection, ByVal comparator As IComparator, Optional descending As Boolean = False) As Collection
+Public Function SortCollection(ByRef coll As Collection, Optional ByVal comparator As IComparator = Nothing, Optional descending As Boolean = False) As Collection
     If coll.Count = 0 Then
         ' An empty collection is already sorted, so we can return a new empty collection.
         Set SortCollection = New Collection
