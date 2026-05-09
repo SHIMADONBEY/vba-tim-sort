@@ -20,11 +20,11 @@ arr = Array(5, 2, 9, 1)
 
 ' To sort in natural order (numbers, strings, dates), pass `Nothing` to the comparator.
 Dim sorted As Variant
-sorted = SortArrayInPlace(arr, Nothing)             ' Ascending
+sorted = SortArray(arr, Nothing)             ' Ascending
 
 ' To sort in descending order, pass True as the optional third argument.
 Dim sortedDesc As Variant
-sortedDesc = SortArrayInPlace(arr, Nothing, True)   ' Descending
+sortedDesc = SortArray(arr, Nothing, True)   ' Descending
 ```
 
 3. Usage （Collection）
@@ -60,12 +60,12 @@ End Function
 Dim comp As IComparator
 Set comp = New MyComparator
 Dim sortedWithComp As Variant
-sortedWithComp = SortArrayInPlace(arr, comp)
+sortedWithComp = SortArray(arr, comp)
 ```
 
 5. Notes
 
-- `SortArrayInPlace()` / `SortCollection()` does not modify the original array or collection; instead, it returns a new array or collection.
+- `SortArray()` / `SortCollection()` does not modify the original array or collection; instead, it returns a new array or collection.
 - When comparing objects, you must provide an `IComparator`. (Failure to do so will result in an error.)
 
 ## Open Source Project Guidelines

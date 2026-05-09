@@ -22,11 +22,11 @@ arr = Array(5, 2, 9, 1)
 
 ' 自然順（数値・文字列・日付）でソートする場合は comparator に Nothing を渡す
 Dim sorted As Variant
-sorted = SortArrayInPlace(arr, Nothing)             ' 昇順
+sorted = SortArray(arr, Nothing)             ' 昇順
 
 ' 降順にする場合
 Dim sortedDesc As Variant
-sortedDesc = SortArrayInPlace(arr, Nothing, True)   ' 降順
+sortedDesc = SortArray(arr, Nothing, True)   ' 降順
 ```
 
 3. 使い方 （Collection）
@@ -62,12 +62,12 @@ End Function
 Dim comp As IComparator
 Set comp = New MyComparator
 Dim sortedWithComp As Variant
-sortedWithComp = SortArrayInPlace(arr, comp)
+sortedWithComp = SortArray(arr, comp)
 ```
 
 5. 補足
 
-- `SortArrayInPlace()` / `SortCollection()` は元の並びを変えず、新しい配列／Collection を返します。
+- `SortArray()` / `SortCollection()` は元の並びを変えず、新しい配列／Collection を返します。
 - オブジェクトを比較する場合は、`IComparator` を必ず提供してください。（渡さないとエラーになります。）
 
 ## OSS プロジェクトガイドライン
