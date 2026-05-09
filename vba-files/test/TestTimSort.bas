@@ -366,6 +366,17 @@ Private Sub Test_SortCollection_Empty()
     RecordResult "SortCollection_Empty", passed, IIf(passed, "", "Expected empty collection")
 End Sub
 
+Private Sub Test_SortCollection_Nothing()
+    Dim raised As Boolean: raised = False
+    On Error Resume Next
+    Err.Clear
+    Dim sortedColl As Collection
+    Set sortedColl = VbaTimSort.SortCollection(Nothing)
+    If Err.Number = vbObjectError + 7402 Then raised = True
+    On Error GoTo 0
+    RecordResult "SortCollection_Nothing_Raises7402", raised, IIf(raised, "", "Expected error 7402 but got " & Err.Number)
+End Sub
+
 ' --- 10. Error handling ---
 
 Private Sub Test_Error_NonArray()
@@ -472,6 +483,7 @@ Public Sub RunAll()
     ' Collection
     Test_SortCollection_Numbers
     Test_SortCollection_Empty
+    Test_SortCollection_Nothing
 
     ' Error handling
     Test_Error_NonArray
@@ -526,6 +538,7 @@ Public Function RunAll_Headless(ByVal outPath As String) As Boolean
     Test_Stability_CustomObject
     Test_SortCollection_Numbers
     Test_SortCollection_Empty
+    Test_SortCollection_Nothing
     Test_Error_NonArray
     Test_Error_ObjectWithoutComparator
 
