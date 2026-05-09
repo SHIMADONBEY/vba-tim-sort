@@ -126,9 +126,9 @@ Private Sub Test_MultiDimensionalElement()
     Err.Clear
     result = VbaTimSort.SortArray(arr)
     Dim errorNumber As Long: errorNumber = Err.Number
-    If errorNumber = vbObjectError + 7408 Then raised = True
+    If errorNumber = VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE Then raised = True
     On Error GoTo 0
-    RecordResult "Sort_MultiDimensionalElement_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & errorNumber)
+    RecordResult "Sort_MultiDimensionalElement_Error", raised, IIf(raised, "", "Expected error " & VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE & " but got " & errorNumber)
 End Sub
 
 Private Sub Test_JaggedArray()
@@ -141,9 +141,9 @@ Private Sub Test_JaggedArray()
     Err.Clear
     result = VbaTimSort.SortArray(arr)
     Dim errorNumber As Long: errorNumber = Err.Number
-    If errorNumber = vbObjectError + 7408 Then raised = True
+    If errorNumber = VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE Then raised = True
     On Error GoTo 0
-    RecordResult "Sort_JaggedArray_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & errorNumber)
+    RecordResult "Sort_JaggedArray_Error", raised, IIf(raised, "", "Expected error " & VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE & " but got " & errorNumber)
 End Sub
 
 ' --- 2. Number Arrays (Long / Double) ---
@@ -371,9 +371,9 @@ Private Sub Test_SortCollection_Nothing()
     Dim sortedColl As Collection
     Set sortedColl = VbaTimSort.SortCollection(Nothing)
     Dim errorNumber As Long: errorNumber = Err.Number
-    If errorNumber = vbObjectError + 7402 Then raised = True
+    If errorNumber = VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE Then raised = True
     On Error GoTo 0
-    RecordResult "SortCollection_Nothing_Raises7402", raised, IIf(raised, "", "Expected error 7402 but got " & errorNumber)
+    RecordResult "SortCollection_Nothing_Error", raised, IIf(raised, "", "Expected error " & VbaTimSort.TIMSORT_ERR_ARG_INVALID_RANGE & " but got " & errorNumber)
 End Sub
 
 ' --- 10. Error handling ---
@@ -384,9 +384,9 @@ Private Sub Test_Error_NonArray()
     Err.Clear
     Dim result As Variant: result = VbaTimSort.SortArray("not an array")
     Dim errorNumber As Long: errorNumber = Err.Number
-    If errorNumber = vbObjectError + 7404 Then raised = True
+    If errorNumber = VbaTimSort.TIMSORT_ERR_ARG_NOT_ARRAY Then raised = True
     On Error GoTo 0
-    RecordResult "Error_NonArray_Raises7404", raised, IIf(raised, "", "Expected error 7404 but got " & errorNumber)
+    RecordResult "Error_NonArray_Error", raised, IIf(raised, "", "Expected error " & VbaTimSort.TIMSORT_ERR_ARG_NOT_ARRAY & " but got " & errorNumber)
 End Sub
 
 Private Sub Test_Error_ObjectWithoutComparator()
@@ -398,9 +398,9 @@ Private Sub Test_Error_ObjectWithoutComparator()
     Err.Clear
     Dim result As Variant: result = VbaTimSort.SortArray(arr)
     Dim errorNumber As Long: errorNumber = Err.Number
-    If errorNumber = vbObjectError + 7301 Then raised = True
+    If errorNumber = VbaTimSort.TIMSORT_ERR_ARG_NO_COMPARATOR_FOR_OBJECTS Then raised = True
     On Error GoTo 0
-    RecordResult "Error_ObjectWithoutComparator_Raises7301", raised, IIf(raised, "", "Expected error 7301 but got " & errorNumber)
+    RecordResult "Error_ObjectWithoutComparator_Error", raised, IIf(raised, "", "Expected error " & VbaTimSort.TIMSORT_ERR_ARG_NO_COMPARATOR_FOR_OBJECTS & " but got " & errorNumber)
 End Sub
 
 ' --- 11. Performance benchmarks ---
