@@ -710,9 +710,11 @@ Private Function IsMultiDimensionalArray(ByRef arr As Variant) As Boolean
     Dim vTemp As Long
     vTemp = LBound(arr, 2)
     IsMultiDimensionalArray = True
-    Exit Function
+    Goto Finally_IsMultiDimensionalArray
 NotMultiDim:
     IsMultiDimensionalArray = False
+Finally_IsMultiDimensionalArray:
+    Err.Clear
 End Function
 
 '/ <summary>
@@ -725,7 +727,9 @@ Private Function HasArrayAllocated(arr As Variant) As Boolean
     Dim vTemp As Long
     vTemp = LBound(arr)
     HasArrayAllocated = True
-    Exit Function
+    Goto Finally_HasArrayAllocated
 NotAllocated:
     HasArrayAllocated = False
+Finally_HasArrayAllocated:
+    Err.Clear
 End Function
