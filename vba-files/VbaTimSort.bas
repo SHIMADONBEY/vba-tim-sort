@@ -41,7 +41,14 @@ Public Const TIMSORT_ERR_STATE_STACK_SIZE_NEGATIVE          = TIMSORT_ERR_GENERA
 '</summary>
 Private Const MAX_RUN_LENGTH As Long = 64
 
-' <summary> Initial size of the run stack. The run stack will grow dynamically if needed, but this is the initial allocation size. The maximum stack size is determined by the maximum number of runs that can be created, which is related to the size of the input array and the minimum run length. In practice, this initial size should be sufficient for most sorting tasks, but it can be increased if you expect to sort very large arrays with many runs.</summary>
+' <summary>
+' Initial size of the run stack.
+' The run stack will grow dynamically if needed, but this is the initial allocation size.
+' The maximum stack size is determined by the maximum number of runs that can be created,
+' which is related to the size of the input array and the minimum run length.
+' In practice, this initial size should be sufficient for most sorting tasks,
+' but it can be increased if you expect to sort very large arrays with many runs.
+'</summary>
 Private Const INITIAL_RUN_STACK_SIZE As Long = 16
 
 ' / <summary>
