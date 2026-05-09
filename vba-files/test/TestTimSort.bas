@@ -100,7 +100,7 @@ End Function
 
 ' -- Test cases -----------------------------------------------
 
-' --- 1. Empty array / Single element ---
+' --- 1. Empty array / Single element / Multiple dimensions element ---
 
 Private Sub Test_EmptyArray()
     Dim arr() As Variant
@@ -118,6 +118,34 @@ Private Sub Test_SingleElement()
     result = VbaTimSort.SortArrayInPlace(arr, Nothing)
     Dim passed As Boolean: passed = (result(0) = 42)
     RecordResult "Sort_SingleElement", passed, IIf(passed, "", "Expected [42], got " & ArrayToString(result))
+End Sub
+
+Private Sub Test_MultiDimensionalElement()
+    Dim raised As Boolean: raised = False
+    Dim arr(0 To 1, 0 To 1) As Variant
+    arr(0, 0) = 2: arr(0, 1) = 1
+    arr(1, 0) = 1: arr(1, 1) = 2
+    Dim result As Variant
+    On Error Resume Next
+    Err.Clear
+    result = VbaTimSort.SortArrayInPlace(arr, Nothing)
+    If Err.Number = vbObjectError + 7408 Then raised = True
+    On Error GoTo 0
+    RecordResult "Sort_MultiDimensionalElement_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & Err.Number)
+End Sub
+
+Private Sub Test_JaggedArray()
+    Dim raised As Boolean: raised = False
+    Dim arr(0 To 1) As Variant
+    arr(0) = Array(3, 2, 1)
+    arr(1) = Array(1, 2)
+    Dim result As Variant
+    On Error Resume Next
+    Err.Clear
+    result = VbaTimSort.SortArrayInPlace(arr, Nothing)
+    If Err.Number = vbObjectError + 7408 Then raised = True
+    On Error GoTo 0
+    RecordResult "Sort_JaggedArray_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & Err.Number)
 End Sub
 
 ' --- 2. Number Arrays (Long / Double) ---
@@ -343,6 +371,7 @@ End Sub
 Private Sub Test_Error_NonArray()
     Dim raised As Boolean: raised = False
     On Error Resume Next
+    Err.Clear
     Dim result As Variant: result = VbaTimSort.SortArrayInPlace("not an array", Nothing)
     If Err.Number = vbObjectError + 7404 Then raised = True
     On Error GoTo 0
@@ -355,6 +384,7 @@ Private Sub Test_Error_ObjectWithoutComparator()
     Set arr(0) = New PersonClass
     Set arr(1) = New PersonClass
     On Error Resume Next
+    Err.Clear
     Dim result As Variant: result = VbaTimSort.SortArrayInPlace(arr, Nothing)
     If Err.Number = vbObjectError + 7301 Then raised = True
     On Error GoTo 0
@@ -408,6 +438,8 @@ Public Sub RunAll()
     ' Empty / Small size
     Test_EmptyArray
     Test_SingleElement
+    Test_MultiDimensionalElement
+    Test_JaggedArray
 
     ' Number arrays
     Test_Numbers_Ascending
@@ -474,6 +506,8 @@ Public Function RunAll_Headless(ByVal outPath As String) As Boolean
     ' Run same tests as RunAll (call the same helpers)
     Test_EmptyArray
     Test_SingleElement
+    Test_MultiDimensionalElement
+    Test_JaggedArray
     Test_Numbers_Ascending
     Test_Numbers_Descending
     Test_Numbers_WithNegatives
