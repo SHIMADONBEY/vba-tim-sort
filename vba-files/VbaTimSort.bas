@@ -6,7 +6,8 @@ Option Explicit
 Private Const INITIAL_RUN_STACK_SIZE As Long = 16
 
 '/ <summary>
-'/ Sorts an array in place using the TimSort algorithm. The original array is not modified; a new sorted array is returned.
+'/ Sorts a one-dimensional array using the TimSort algorithm. 
+'/ The original array is not modified; a new sorted array is returned.
 '/ </summary>
 '/ <param name="arr">The array to be sorted. Must be a one-dimensional array.</param>
 '/ <param name="comparator">
