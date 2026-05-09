@@ -129,10 +129,10 @@ Private Sub Test_MultiDimensionalElement()
     On Error Resume Next
     Err.Clear
     result = VbaTimSort.SortArray(arr)
-    Dim exitedCode As Long: exitedCode = Err.Number
-    If exitedCode = vbObjectError + 7408 Then raised = True
+    Dim errorNumber As Long: errorNumber = Err.Number
+    If errorNumber = vbObjectError + 7408 Then raised = True
     On Error GoTo 0
-    RecordResult "Sort_MultiDimensionalElement_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & exitedCode)
+    RecordResult "Sort_MultiDimensionalElement_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & errorNumber)
 End Sub
 
 Private Sub Test_JaggedArray()
@@ -144,10 +144,10 @@ Private Sub Test_JaggedArray()
     On Error Resume Next
     Err.Clear
     result = VbaTimSort.SortArray(arr)
-    Dim exitedCode As Long: exitedCode = Err.Number
-    If exitedCode = vbObjectError + 7408 Then raised = True
+    Dim errorNumber As Long: errorNumber = Err.Number
+    If errorNumber = vbObjectError + 7408 Then raised = True
     On Error GoTo 0
-    RecordResult "Sort_JaggedArray_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & exitedCode)
+    RecordResult "Sort_JaggedArray_Raises7408", raised, IIf(raised, "", "Expected error 7408 but got " & errorNumber)
 End Sub
 
 ' --- 2. Number Arrays (Long / Double) ---
@@ -374,10 +374,10 @@ Private Sub Test_SortCollection_Nothing()
     Err.Clear
     Dim sortedColl As Collection
     Set sortedColl = VbaTimSort.SortCollection(Nothing)
-    Dim exitedCode As Long: exitedCode = Err.Number
-    If exitedCode = vbObjectError + 7402 Then raised = True
+    Dim errorNumber As Long: errorNumber = Err.Number
+    If errorNumber = vbObjectError + 7402 Then raised = True
     On Error GoTo 0
-    RecordResult "SortCollection_Nothing_Raises7402", raised, IIf(raised, "", "Expected error 7402 but got " & exitedCode)
+    RecordResult "SortCollection_Nothing_Raises7402", raised, IIf(raised, "", "Expected error 7402 but got " & errorNumber)
 End Sub
 
 ' --- 10. Error handling ---
@@ -387,10 +387,10 @@ Private Sub Test_Error_NonArray()
     On Error Resume Next
     Err.Clear
     Dim result As Variant: result = VbaTimSort.SortArray("not an array")
-    Dim exitedCode As Long: exitedCode = Err.Number
-    If exitedCode = vbObjectError + 7404 Then raised = True
+    Dim errorNumber As Long: errorNumber = Err.Number
+    If errorNumber = vbObjectError + 7404 Then raised = True
     On Error GoTo 0
-    RecordResult "Error_NonArray_Raises7404", raised, IIf(raised, "", "Expected error 7404 but got " & exitedCode)
+    RecordResult "Error_NonArray_Raises7404", raised, IIf(raised, "", "Expected error 7404 but got " & errorNumber)
 End Sub
 
 Private Sub Test_Error_ObjectWithoutComparator()
@@ -401,10 +401,10 @@ Private Sub Test_Error_ObjectWithoutComparator()
     On Error Resume Next
     Err.Clear
     Dim result As Variant: result = VbaTimSort.SortArray(arr)
-    Dim exitedCode As Long: exitedCode = Err.Number
-    If exitedCode = vbObjectError + 7301 Then raised = True
+    Dim errorNumber As Long: errorNumber = Err.Number
+    If errorNumber = vbObjectError + 7301 Then raised = True
     On Error GoTo 0
-    RecordResult "Error_ObjectWithoutComparator_Raises7301", raised, IIf(raised, "", "Expected error 7301 but got " & exitedCode)
+    RecordResult "Error_ObjectWithoutComparator_Raises7301", raised, IIf(raised, "", "Expected error 7301 but got " & errorNumber)
 End Sub
 
 ' --- 11. Performance benchmarks ---
