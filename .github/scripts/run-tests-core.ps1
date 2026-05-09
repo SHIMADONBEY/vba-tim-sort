@@ -137,37 +137,33 @@ try {
 
     Write-Host ("Test run completed. Passed: {0}" -f $passed)
 
-    # If the test passed, we trust the VBA-authored result file as authoritative and do not overwrite it. This allows the macro to have full control over the output when the test is successful. If it failed, we write a new result file with the raw content included for debugging purposes.
-    if ($passed) {
+    # JSON content is considered the authoritative source for the test result, but the script will log the decision and keep the VBA-authored result file as is, regardless of the JSON content.
+    # This allows for post-run analysis and debugging based on the VBA output while still using the JSON for determining pass/fail status.
+    # Log the test result and the decision made based on the JSON content.
+    # This is useful for debugging and tracing the test outcomes, especially when multiple runs are involved.
     $time = (Get-Date).ToString("o")
-    "$time Test passed; keeping VBA-authored result file as authoritative: $RunOutPath" | Out-File -FilePath .\test-result.write-debug.log -Append -Encoding utf8
-    $global:__ResultWritten = $true
-    $global:__ResultExitCode = 0
-    Exit $global:__ResultExitCode
+
+    if ($passed) {
+      $logMessage = "$time Test passed; JSON indicates success. Keeping VBA-authored result file as authoritative: $RunOutPath"
+      $global:__ResultExitCode = 0
+    } else {
+      $logMessage = "$time Test failed; JSON indicates failure. Keeping VBA-authored result file as authoritative: $RunOutPath"
+      $global:__ResultExitCode = 2
     }
 
-    # If the test failed, write a supplementary result file on the PowerShell side (including the raw content)
-    $out = @{ passed = $passed; macro = $Macro; workbook = $fullPath.Path; timestamp = (Get-Date).ToString("o"); source = "json" }
-    $out.raw = $raw
-
-    # Serialize and pass it (Write-ResultAndExit expects a string)
-    Write-ResultAndExit ($out | ConvertTo-Json -Depth 10 -Compress) 2
-    Exit $global:__ResultExitCode
-  } catch {
-    # If an exception occurs during the COM interaction or macro execution, we catch it and write a structured error result with details about the exception. This ensures that even if something goes wrong, we can capture the error information in a consistent format for debugging and analysis.
-    $err = @{ error = "macro_exception"; message = $_.Exception.Message; stack = $_.Exception.StackTrace; macro = $Macro; timestamp = (Get-Date).ToString("o") }
-    Write-ResultAndExit $err 3
+    Out-File -FilePath .\test-result.write-debug.log -Append -Encoding utf8 -InputObject $logMessage
+    $global:__ResultWritten = $true
     Exit $global:__ResultExitCode
   } finally {
     # COM cleanup (this runs even after Write-ResultAndExit)
     Write-Host "Cleaning up COM objects..."
-    if ($wb -ne $null) {
+    if ($null -ne $wb) {
       Write-Host "Closing workbook..."
       try { $wb.Close($false) } catch {}
       try { [System.Runtime.Interopservices.Marshal]::ReleaseComObject($wb) | Out-Null } catch {}
       $wb = $null
     }
-    if ($xl -ne $null) {
+    if ($null -ne $xl) {
       Write-Host "Quitting Excel application..."
       try { $xl.Quit() } catch {}
       try { [System.Runtime.Interopservices.Marshal]::ReleaseComObject($xl) | Out-Null } catch {}

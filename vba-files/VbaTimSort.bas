@@ -51,7 +51,7 @@ End Function
 ' / <summary>
 ' / Sorts a Collection using the TimSort algorithm. The original Collection is not modified; a new sorted Collection is returned.
 ' / </summary>
-' / <param name="coll">The Collection to be sorted.</param>
+' / <param name="coll">The Collection to be sorted. Cannot be Nothing.</param>
 ' / <param name="comparator">
 ' / An optional IComparator implementation for custom object comparison.
 ' / This is required if the Collection contains objects that do not have a natural ordering or if you want to sort in a custom order.
@@ -60,7 +60,9 @@ End Function
 ' / <param name="descending">If True, sorts in descending order. Default is False (ascending order).</param>
 ' / <returns>A new Collection containing the sorted elements.</returns>
 Public Function SortCollection(ByRef coll As Collection, Optional ByVal comparator As IComparator = Nothing, Optional descending As Boolean = False) As Collection
-    If coll.Count = 0 Then
+    If coll Is Nothing Then
+        Err.Raise vbObjectError + 7402, "VbaTimSort.SortCollection", "Input Collection cannot be Nothing."
+    ElseIf coll.Count = 0 Then
         ' An empty collection is already sorted, so we can return a new empty collection.
         Set SortCollection = New Collection
         Exit Function
