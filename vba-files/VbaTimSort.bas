@@ -700,11 +700,11 @@ Private Function IsEmptyArray(ByRef arr As Variant) As Boolean
     IsEmptyArray = (vUb < vLb) Or (vLb = -1 And vUb = -1)
 End Function
 
-' /<summary>
+' / <summary>
 ' Checks whether an array is a multi-dimensional array. This is used to ensure that the sorting functions only operate on one-dimensional arrays, as multi-dimensional arrays are not supported.
-' /</summary>
-' /<param name="arr">The array to check. This should be a Variant variable that may or may not contain an array.</param>
-' /<returns>True if the array is a multi-dimensional array, False if it is a one-dimensional array or not an array at all.</returns>
+' / </summary>
+' / <param name="arr">The array to check. This should be a Variant variable that may or may not contain an array.</param>
+' / <returns>True if the array is a multi-dimensional array, False if it is a one-dimensional array or not an array at all.</returns>
 Private Function IsMultiDimensionalArray(ByRef arr As Variant) As Boolean
     On Error GoTo NotMultiDim
     Dim vTemp As Long
